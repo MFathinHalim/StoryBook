@@ -1,70 +1,66 @@
-README.md
+# Storybook - Next.js Application
 
-Project Name: Storybook
+## Description
 
-Description
+Storybook is a Next.js application that allows users to create, view, edit, and share notes with friends using unique codes. The project integrates **Storybook** for UI component development and testing, enabling an efficient development workflow. 
 
-This Next.js application allows you to create, view, edit, and share notes with your friends using unique codes. It utilizes Storybook for efficient UI component development and testing.
+## Getting Started
 
-Getting Started
+### Prerequisites
+Ensure the following are installed on your system:
+- Node.js and npm (or yarn)
+- Basic understanding of **Next.js**, **React**, and **TypeScript**
 
-Prerequisites:
-Node.js and npm (or yarn) installed on your system.
-Basic understanding of Next.js, React, and TypeScript.
+### Installation
+1. Clone the repository.
+2. Run `npm install` or `yarn` to install dependencies.
+3. Use `http://localhost:3000` as the default local development URL.
 
-Use code with caution.
+### Storybook
 
-Install Dependencies:
-Bash
-npm install  # or yarn install
-Use code with caution.
+**Storybook** provides a visual interface for creating and testing UI components in isolation. Components can be found in the `src/stories` directory.
 
-Run Storybook:
-Bash
-npm run storybook  # or yarn storybook
-Use code with caution.
+To start developing with **Storybook**:
+1. Run `npm run storybook` (or `yarn storybook`).
+2. Create or modify stories in the `src/stories` directory.
+3. Changes will automatically reflect in the Storybook UI.
 
-This will start Storybook development server, typically accessible at http://localhost:3007 by default.
-Storybook
+### Development Server
 
-Storybook provides a visual interface for creating and testing your UI components in isolation. You can find the Storybook components under the src/stories directory. To develop within Storybook:
+To run the full Next.js application (including backend APIs) for development purposes:
+1. Run `npm run dev` (or `yarn dev`).
+2. The app will be accessible at `http://localhost:3000`.
 
-Run npm run storybook (or yarn storybook) as mentioned above.
-Create or modify stories within the src/stories directory.
-Changes in stories will reflect automatically in the Storybook UI.
-Development Server
+## Backend Controllers (WIP)
 
-To run the full Next.js application for development purposes (including backend APIs):
+The following outlines the planned backend API controllers and their key functions. These are under development and may be updated.
 
-Run npm run dev (or yarn dev).
-The application will typically be accessible at http://localhost:3000 by default.
-Notes on Controllers' To-Do List (WIP):
+### `controllers/book.ts`
 
-The provided to-do list offers a roadmap for the backend API development. Here's an overview of functionalities to implement (specific implementation details might vary depending on your chosen backend framework and database):
+- **postBook(bookData)**: Creates a new book, returning its ID.
+- **editBook(bookId, bookData)**: Updates an existing book, returning its ID.
+- **deleteBook(bookId)**: Deletes a book and returns a status `200`.
+- **getBook(bookId)**: Retrieves a book by its ID and returns a `bookType` object.
+- **addComment(bookId, commentData)**: Adds a comment to the book, returns status `200`.
+- **getBooksByUserId(userId)**: Retrieves all books associated with the user.
 
-controllers/book.ts
+### `controllers/comment.ts`
 
-postBook(bookData): Creates a new book and returns its ID for redirection or other use.
-editBook(bookId, bookData): Updates an existing book and returns its ID for redirection or other use.
-deleteBook(bookId): Deletes a book and returns a 200 status code for redirection or frontend confirmation.
-getBook(bookId): Retrieves a book by its ID and returns a bookType object for display.
-addComment(bookId, commentData): Adds a comment to a specific book and returns a 200 status code for frontend handling.
-getBooksByUserId(userId): Fetches all books associated with a specific user and returns an array of bookType objects.
-controllers/comment.ts
+- **addComment(bookId, commentData)**: (Implemented in `controllers/book.ts`) Adds a comment.
+- **upvoteComment(commentId)**: Increments or decrements upvote count, returns a boolean.
+- **getComments(bookId)**: Retrieves all comments for a specific book, optionally sorted by upvotes.
 
-addComment(bookId, commentData): (implemented in controllers/book.ts) Adds a comment to a book.
-upvoteComment(commentId): Increments or decrements the upvote count of a comment based on user logic and returns a boolean indicating the change (true for increased upvote, false for decreased).
-getComments(bookId): Retrieves all comments for a specific book, potentially sorted by upvote count (implementation details depend on database support).
-controllers/userType.ts
+### `controllers/userType.ts`
 
-login(username, password): Authenticates a user and returns an access token and other relevant user data upon successful login.
-signup(userData): Registers a new user and returns an access token or other confirmation information.
-editUser(userId, userData): Updates an existing user's details.
-getMinimalUserData(userId): Retrieves minimal user data (username, name, profile picture) for UI purposes.
-Project Status
+- **login(username, password)**: Authenticates a user and returns an access token.
+- **signup(userData)**: Registers a new user, returning a token or confirmation.
+- **editUser(userId, userData)**: Updates a user’s details.
+- **getMinimalUserData(userId)**: Retrieves minimal user information for UI.
 
-This project is currently under development. The to-do list for the controllers serves as a guide for backend API functionality. Feel free to contribute to the project and help further develop it.
+## Project Status
 
-Contribution
+This project is currently under development. The to-do list for the controllers serves as a guide for backend API functionality. Contributions are welcome!
 
-We welcome contributions to this project! 
+## Contribution
+
+We welcome all contributions to improve the project. Feel free to submit pull requests, report issues, or offer suggestions.
