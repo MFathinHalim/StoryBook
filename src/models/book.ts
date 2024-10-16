@@ -8,7 +8,6 @@ const bookSchema = new Schema<bookType>({
   notes: String,
   time: String,
   cover: String,
-  comments: [{type: Types.ObjectId, ref: "comment"}]
 });
 
 const bookModel: Model<bookType> = models.book || model<bookType>("book", bookSchema);

@@ -6,7 +6,7 @@ const commentSchema = new Schema<commentType>({
   user: { type: Types.ObjectId, ref: "user" },
   comment: String,
   upvote: [{ type: Types.ObjectId, ref: "user" }],
-  comments: [{type: Types.ObjectId, ref: "comment"}]
+  commentTo: String
 });
 
 const commentModel: Model<commentType> = models.comment || model<commentType>("comment", commentSchema);
