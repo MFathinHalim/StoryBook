@@ -1,22 +1,24 @@
 declare type bookType = {
+    _id: any;
     id: string;
     user: userType;
     title: string;
     notes: string;
     time: string;
     cover?: string;
-    comments: commentType[];
 }
 
 declare type commentType = {
+    _id: any;
     id: string;
     user: userType;
     comment: string;
     upvote: userType[];
-    comments?: commentType[];
+    commentTo: string;
 }
 
 declare type userType = {
+    _id: any;
     name: string;
     username: string;
     desc?: string;
