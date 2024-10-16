@@ -1,7 +1,7 @@
 declare type bookType = {
     _id: any;
     id: string;
-    user: userType;
+    user: any;
     title: string;
     notes: string;
     time: string;
@@ -11,14 +11,15 @@ declare type bookType = {
 declare type commentType = {
     _id: any;
     id: string;
-    user: userType;
+    user: any;
+    time: string;
     comment: string;
     upvote: userType[];
     commentTo: string;
 }
 
 declare type userType = {
-    _id: any;
+    _id?: any;
     name: string;
     username: string;
     desc?: string;
@@ -28,5 +29,5 @@ declare type userType = {
       accessNow: string;
       timeBefore: string;
     };
-    bookmark?: bookType[];
+    bookmark?: any[];
 }
