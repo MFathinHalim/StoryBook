@@ -14,6 +14,9 @@ import { userModel } from "@/models/user";
 import type { Document } from "mongoose";
 import mongoose from "mongoose";
 ///////////////////////////////////////////
+import dbConnect from "@/utils/mongoose";
+await dbConnect();
+
 dotenv.config();
 class Users {
   static instances: Users;

@@ -14,6 +14,8 @@
 //Good Luck :)
 
 import { commentModel } from "@/models/comment";
+import dbConnect from "@/utils/mongoose";
+await dbConnect();
 
 export default class Comment {
   static instance: Comment;

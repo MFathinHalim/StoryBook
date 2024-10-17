@@ -11,6 +11,8 @@
 
 import { bookModel } from "@/models/book";
 import mongoose, { Model } from "mongoose";
+import dbConnect from "@/utils/mongoose";
+await dbConnect();
 
 export default class Books {
   static instance: Books;
@@ -33,7 +35,7 @@ export default class Books {
     return {
       //The Function of New Post
       //? To use it, using Books.UserAction().newPost();
-      async newPost(book: bookType, user: userType, cover: string): Promise<string | number> {
+      async newPost(book: bookType, user: any, cover: string): Promise<string | number> {
         const time = new Date().toLocaleDateString();
         const trimmedFile = cover.trim();
         const isTitleEmpty = !book.title || book.title.trim().length === 0;

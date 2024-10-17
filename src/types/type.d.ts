@@ -1,10 +1,10 @@
 declare type bookType = {
-    _id: any;
-    id: string;
-    user: any;
+    _id?: any;
+    id?: any;
+    user?: any;
     title: string;
     notes: string;
-    time: string;
+    time?: string;
     cover?: string;
 }
 
