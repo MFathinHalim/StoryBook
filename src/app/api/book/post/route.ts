@@ -51,3 +51,5 @@ export async function POST(req: NextRequest) {
 
   return Response.json({ post });
 }
+
+//notes from Fathin: today is oct 17, RIP Liam
