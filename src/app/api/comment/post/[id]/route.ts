@@ -7,18 +7,19 @@ const userInstance = Users.getInstances();
 const bookInstance = Books.getInstance()
 const commentInstance = Comments.getInstance()
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
     const user = await userInstance.authRequest(req)
     if(!user) return NextResponse.json({msg: "Invalid Authentication."}, { status: 401 })
 
-    const id = req.nextUrl.pathname.split("/")[3]
+    const id = req.nextUrl.pathname.split("/")[4]
     const book = await bookInstance.GetBooks(id)
 
     if (!book) return NextResponse.json({ msg: "Book not found!" }, { status: 404 })
 
-    const page = req.nextUrl.searchParams.get("page")
+    const { comment } = await req.json()
 
-    const { comments } = await commentInstance.getComments(book.id, page ? parseInt(page) : 1)
+    const newComment = await commentInstance.addComment({ comment, id: "", user, time: new Date().toLocaleString(), _id: null, upvote: [], commentTo: book.id }, book.id, user)
+    if (newComment === 204) return NextResponse.json({ msg: "Comment is empty!" }, { status: 204 })
 
-    return NextResponse.json({ comments })
+    return NextResponse.json({ comment: newComment })
 }
