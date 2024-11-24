@@ -316,7 +316,7 @@ class Users {
 
             if (!result || typeof result === "string") return null
                 
-            let user = await userModel.findOne({ id: result.id })
+            let user = await userModel.findOne({ id: result.id }).lean()
             if (!user) return null
 
             user.accessToken = {

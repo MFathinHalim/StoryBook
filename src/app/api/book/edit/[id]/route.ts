@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest) {
     const { title, cover } = await req.json()
     book.title = title
 
-    if (user.id !== book.id) return NextResponse.json({ msg: "Invalid Authentication" }, { status: 401 })
+    if (!user._id.equals(book.user)) return NextResponse.json({ msg: "Invalid Authentication" }, { status: 401 })
 
     const result = await bookInstance.UserAction().editBook(book, cover)
 
