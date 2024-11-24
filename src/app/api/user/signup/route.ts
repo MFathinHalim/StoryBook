@@ -1,5 +1,5 @@
 import Users from "@/controllers/user";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const userInstance = Users.getInstances();
 /**

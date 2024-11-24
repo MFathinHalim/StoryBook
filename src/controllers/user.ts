@@ -15,9 +15,17 @@ import type { Document } from "mongoose";
 import mongoose from "mongoose";
 ///////////////////////////////////////////
 import dbConnect from "@/utils/mongoose";
+import { NextRequest } from "next/server";
 await dbConnect();
 
 dotenv.config();
+
+// declare module "jsonwebtoken" {
+//     interface JwtPayload {
+//         id: string
+//     }
+// }
+
 class Users {
   static instances: Users;
 
@@ -86,7 +94,7 @@ class Users {
       bookmark: []
     };
 
-    this.#users.create(newUser); //di push
+    await this.#users.create(newUser); //di push
 
     return newUser; //di return
   }
@@ -299,7 +307,30 @@ class Users {
       console.error("Error editing profile:", error);
       return this.#error[1];
     }
-}
+  }
+    async authRequest(req: NextRequest) {
+        try {
+            const token = req.headers.get("authorization")?.split(" ")[1]
+            if (!token) return null
+            const result = jwt.verify(token, process.env.JWT_SECRET_KEY || "")
+
+            if (!result || typeof result === "string") return null
+                
+            let user = await userModel.findOne({ id: result.id }).lean()
+            if (!user) return null
+
+            user.accessToken = {
+                accessNow: "",
+                timeBefore: ""
+            }
+            user.password = ""
+
+            return user;
+        } catch (e: any) {
+            console.error(e)
+            return null
+        }
+    }
 }
 
 export default Users; //TODO Export biar bisa dipake

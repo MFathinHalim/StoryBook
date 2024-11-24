@@ -68,16 +68,13 @@ export default class Books {
       //! Function for delete book [WARNING: DANGER!!]
       //? to use it, using Books.UserAction().editBook();
       async deleteBook(book: bookType) {
-        await bookModel
-          .deleteOne({ _id: book._id })
-          .then(() => {
-            console.log("deleted"); // Success
-            return 200;
-          })
-          .catch((error) => {
+        try {
+          await bookModel.deleteOne({ _id: book._id })
+            return true
+        } catch(error) {
             console.log(error); //! Failed
-          });
-        return 200;
+            return false
+        }
       },
     };
   }

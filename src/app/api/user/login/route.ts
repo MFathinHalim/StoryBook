@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     // Set cookies
     response.cookies.set('refreshtoken', tokenFunction.refreshToken, {
-      path: '/api/refreshToken',
+      path: '/api/user/refreshToken',
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
     });
