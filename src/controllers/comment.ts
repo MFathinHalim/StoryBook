@@ -23,6 +23,11 @@ export default class Comment {
   //@ts-ignore
   #comments: Model<commentType>;
 
+  static getInstance() {
+    if (!Comment.instance) Comment.instance = new Comment(); //Untuk ngestart class
+    return Comment.instance;
+  }
+
   async addComment(comment: commentType, bookId: string, user: userType) {
     const time = new Date().toLocaleDateString();
     const isTitleEmpty = !comment.comment || comment.comment.trim().length === 0;
@@ -42,8 +47,8 @@ export default class Comment {
   async getComments(bookId: string, page: number = 1) {
     const limit = 5;
     const skip = page > 0 ? (page - 1) * limit : 0;
-    let posts = await this.#comments.find({ commentTo: bookId }).populate("user", "-password").populate("user", "-desc").populate("user", "-bookmark").sort({ upvote: -1 }).limit(limit).skip(skip).exec();
-    return { posts };
+    let comments = await this.#comments.find({ commentTo: bookId }).populate("user", "-password").populate("user", "-desc").populate("user", "-bookmark").sort({ upvote: -1 }).limit(limit).skip(skip).exec();
+    return { comments };
   }
   upvote(
     commentId: string,
