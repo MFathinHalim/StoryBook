@@ -11,12 +11,13 @@ export async function POST(req: NextRequest) {
   const { username, password } = body;
 
   try {
-    let result = await userInstance.login(username.trim(), password);
+    let result = await userInstance.login(username, password);
+    
 
     if (result.username === "system") {
       return NextResponse.json({ error: 'System user not allowed' }, { status: 400 });
     }
-
+    
     const tokenFunction = await userInstance.createAccessToken(result._id.toString());
     const token = tokenFunction.newToken;
 
