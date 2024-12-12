@@ -11,7 +11,7 @@ export async function POST(req:NextRequest) {
     if(!user) return NextResponse.json({msg: "Invalid Authentication."}, { status: 401 })
 
     const body = await req.json();
-    const { name, desc, pp } = body
-    await userInstance.editProfile({ name, desc, username: user.username }, pp)
+    const { _id, name, desc, pp } = body
+    await userInstance.editProfile({ _id, name, desc, username: user.username }, pp)
     return NextResponse.json({}, { status: 200 })
 }

@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 
 export default function Homepage() {
-    const [user, setUser] = useState<any>(null); // User state
-    const [token, setToken] = useState("");
+    const [user, setUser] = useState<userType | null>(null); // User state
+    const [books, setBooks] = useState<bookType[]>([]);
 
     const refreshAccessToken = async () => {
         try {
@@ -40,7 +40,6 @@ export default function Homepage() {
                     console.warn("No token available");
                     return;
                 }
-                setToken(tokenTemp);
 
                 const response = await fetch(`/api/user/check`, {
                     method: "POST",
@@ -54,7 +53,19 @@ export default function Homepage() {
 
                 const check = await response.json();
                 setUser(check);
-                
+
+                if (check._id && check._id !== "system") {
+                    const fetchBook = await fetch(`/api/book/get/userId/${check._id}`, {
+                        headers: { Authorization: `Bearer ${tokenTemp}` },
+                    });
+
+                    if (!fetchBook.ok) {
+                        console.error("Error Fetching Book");
+                        throw new Error("Error");
+                    }
+                    const booksFetch = await fetchBook.json();
+                    setBooks(booksFetch);
+                }
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setUser(null);
@@ -74,8 +85,28 @@ export default function Homepage() {
 
     return (
         <>
-            <h1>Story Book</h1>
-            <h2>Hello {user?.username || "Guest"}</h2>
+            <img src={user?.pp || ""} alt={`profile picture from ${user.username}`} width={500} height={500} />
+            <h1>{user?.name || user?.username}</h1>
+            <p>@{user?.username || "Guest"}</p>
+            <h2>{user?.desc || "No Description"}</h2>
+            <div>
+                <button>Wanna write something?</button>
+                <a href="/editProfile">Edit Profile</a>
+            </div>
+            <div>
+                <h3>Recent Stories</h3>
+                {books.length > 0 ? (
+                    <ul>
+                        {books.map((book, index) => (
+                            <li key={index}>
+                                <h3>{book?.title}</h3>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>Tidak ada buku untuk ditampilkan.</p>
+                )}
+            </div>
         </>
     );
 }
