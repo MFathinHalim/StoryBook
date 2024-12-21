@@ -2,7 +2,7 @@ export default function Navbar(): JSX.Element {
   return (
     <>
       <nav>
-        <h1>Story Book</h1>
+        <a href="/home"><h1>Story Book</h1></a>
       </nav>
     </>
   );

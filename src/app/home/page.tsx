@@ -99,7 +99,7 @@ export default function Homepage() {
                     <ul>
                         {books.map((book, index) => (
                             <li key={index}>
-                                <h3>{book?.title}</h3>
+                                <a href={`/book/${book?.id}`}><h3>{book?.title}</h3></a>
                             </li>
                         ))}
                     </ul>

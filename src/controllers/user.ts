@@ -326,10 +326,9 @@ class Users {
             const token = req.headers.get("authorization")?.split(" ")[1];
             if (!token) return null;
             const result = jwt.verify(token, process.env.JWT_SECRET_KEY || "");
-
             if (!result || typeof result === "string") return null;
 
-            let user = await userModel.findOne({ id: result.id }).lean();
+            let user = await userModel.findOne({ _id: result._id }).lean();
             if (!user) return null;
 
             user.accessToken = {
