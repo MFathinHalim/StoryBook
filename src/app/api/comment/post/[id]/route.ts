@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
 
     const newComment = await commentInstance.addComment({ comment, id: "", user, time: new Date().toLocaleString(), _id: null, upvote: [], commentTo: book.id }, book.id, user)
     if (newComment === 204) return NextResponse.json({ msg: "Comment is empty!" }, { status: 204 })
+        console.log(newComment)
 
     return NextResponse.json({ comment: newComment })
 }

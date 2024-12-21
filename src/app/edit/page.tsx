@@ -16,7 +16,6 @@ export default function EditProfile() {
     const refreshAccessToken = async () => {
         try {
             if (sessionStorage.getItem("token")) {
-                console.log("Using cached token");
                 return sessionStorage.getItem("token");
             }
 
@@ -32,7 +31,6 @@ export default function EditProfile() {
 
             const data = await response.json();
             sessionStorage.setItem("token", data.token);
-            console.log("Token refreshed:", data.token);
             return data.token;
         } catch (error) {
             console.error("Error refreshing access token:", error);

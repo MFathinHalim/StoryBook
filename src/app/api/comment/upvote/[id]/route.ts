@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
     const id = req.nextUrl.pathname.split("/")[4]
 
-    await commentInstance.upvote(id, user)
-
-    return NextResponse.json({ msg: "Success" })
+    const a = await commentInstance.upvote(id, user)
+    console.log(a)
+    return NextResponse.json({total: a})
 }

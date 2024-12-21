@@ -20,7 +20,6 @@ export default function LoginForm() {
 
         if (response.ok) {
             const data: any = await response.json();
-            console.log(data.token)
             if (data.token) {
                 sessionStorage.setItem("token", data.token);
                 router.push("/home");
