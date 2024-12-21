@@ -8,7 +8,6 @@ export default function Homepage() {
     const refreshAccessToken = async () => {
         try {
             if (sessionStorage.getItem("token")) {
-                console.log("Using cached token");
                 return sessionStorage.getItem("token");
             }
 
@@ -24,7 +23,6 @@ export default function Homepage() {
 
             const data = await response.json();
             sessionStorage.setItem("token", data.token);
-            console.log("Token refreshed:", data.token);
             return data.token;
         } catch (error) {
             console.error("Error refreshing access token:", error);
@@ -91,7 +89,7 @@ export default function Homepage() {
             <h2>{user?.desc || "No Description"}</h2>
             <div>
                 <button>Wanna write something?</button>
-                <a href="/editProfile">Edit Profile</a>
+                <a href="/edit">Edit Profile</a>
             </div>
             <div>
                 <h3>Recent Stories</h3>
