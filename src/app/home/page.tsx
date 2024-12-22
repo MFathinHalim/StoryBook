@@ -17,11 +17,11 @@ export default function Homepage() {
             });
 
             if (!response.ok) {
-                console.error("Failed to refresh token");
-                return null;
+                return window.location.href = "/login"
             }
 
             const data = await response.json();
+            if(!data.token) window.location.href = "/login"
             sessionStorage.setItem("token", data.token);
             return data.token;
         } catch (error) {
