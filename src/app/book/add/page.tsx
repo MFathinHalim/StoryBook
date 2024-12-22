@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import "react-quill/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -27,7 +27,7 @@ export default function AddBooks() {
 
       const response = await fetch("/api/user/refreshToken", {
         method: "POST",
-        credentials: "include", // Ensure cookies are sent
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -57,7 +57,7 @@ export default function AddBooks() {
     }
 
     try {
-      const token = await refreshAccessToken(); // Ensure the token is awaited
+      const token = await refreshAccessToken();
       if (!token) {
         throw new Error("Unable to get access token");
       }
@@ -65,7 +65,7 @@ export default function AddBooks() {
       const response = await fetch("/api/book/post", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // Use the token correctly
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -87,59 +87,70 @@ export default function AddBooks() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Add a New Book</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block font-semibold mb-1">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          />
+    <div className="container">
+      <div className="content">
+        <div className="space-y-4">
+          <h1 className="bookTitle">Add a New Book</h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="mt-2">
+              <label htmlFor="title" className="block font-semibold mb-1 h5">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="form-control background-dark text-white border-2 border-secondary rounded p-2"
+                placeholder="Enter book title..."
+                required
+              />
+            </div>
+
+            <div className="mt-2">
+              <label htmlFor="notes" className="block font-semibold mb-1 h5">
+                Notes
+              </label>
+              <ReactQuill
+                value={notes}
+                onChange={setNotes}
+                className="background-dark text-white border-2 border-secondary rounded quill-custom"
+              />
+            </div>
+
+            <div className="mt-2">
+              <label htmlFor="image" className="block font-semibold mb-1 h5">
+                Cover Image (optional)
+              </label>
+              <input
+              disabled
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="form-control background-dark text-white border-2 border-secondary rounded p-2"
+              />
+            </div>
+
+            <div className="text-end mt-2">
+              <button
+                type="submit"
+                className="btn btn-sm primary-btn rounded-pill px-4 py-1"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Add Book"}
+              </button>
+            </div>
+
+            {successMessage && (
+              <p className="text-green-500 font-semibold mt-2">
+                {successMessage}
+              </p>
+            )}
+          </form>
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="notes" className="block font-semibold mb-1">
-            Notes
-          </label>
-          <ReactQuill
-            value={notes}
-            onChange={setNotes}
-            className="bg-white border border-gray-300 rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="image" className="block font-semibold mb-1">
-            Cover Image (optional)
-          </label>
-          <input
-            type="file"
-            id="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Add Book"}
-        </button>
-
-        {successMessage && (
-          <p className="text-green-500 font-semibold mt-2">{successMessage}</p>
-        )}
-      </form>
     </div>
   );
 }

@@ -1,23 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap");
 :root {
-    --background: #060B0E;
-    --text: #F8FBFC;
-    --accent: #4A5364;
-    --primary: #99A8C7;
-    --secondary: #C0C9DE;
-    --text-secondary: #ECF3F8;
+    --background: #060b0e;
+    --text: #f8fbfc;
+    --accent: #4a5364;
+    --primary: #99a8c7;
+    --secondary: #c0c9de;
+    --text-secondary: #ecf3f8;
     --danger: rgb(255, 98, 98);
 }
 .danger-text {
     color: var(--danger) !important;
 }
+.ql-snow {
+    border: 1px solid var(--primary) !important;
+}
+.ql-editor {
+    height: 500px !important;
+    max-height: 100% !important;
+    font-size: x-large;
+}
+.ql-toolbar {
+    border-bottom: none !important;
+    background-color: var(--primary) !important;
+    border-radius: 5px 5px 0 0; /* Menambahkan border-radius di bagian atas */
+}
+
+.ql-picker-label,
+.ql-toolbar .ql-formats > button {
+    background-color: var(--primary) !important;
+    font-size: 16px;
+    border-radius: 5px;
+
+    margin-right: 5px; /* Mengganti margin-right dengan margin */
+    transition: background-color 0.3s ease; /* Menambahkan transisi */
+}
+
+.ql-toolbar .ql-formats > button {
+    height: 30px !important; /* Mengurangi tinggi tombol */
+    width: 30px !important; /* Mengurangi lebar tombol */
+    display: inline-flex; /* Menggunakan flexbox untuk centering */
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd; /* Menambahkan border */
+}
+
+.ql-toolbar .ql-formats > button:hover {
+    background-color: #eee !important; /* Mengubah warna latar belakang saat dihover */
+}
+
+.ql-toolbar .ql-formats > button > svg {
+    stroke: #333; /* Mengubah warna ikon */
+    transition: stroke 0.3s ease; /* Menambahkan transisi */
+}
+
+.ql-toolbar .ql-formats > button:hover > svg {
+    stroke: var(--primary); /* Mengubah warna ikon saat dihover */
+}
 body {
     background-color: var(--background) !important;
     color: var(--text) !important;
-    font-family: 'Montserrat', sans-serif !important;
+    font-family: "Montserrat", sans-serif !important;
 }
 .background-dark {
-    background-color: var(--background) !important;
+    /* From https://css.glass */
+    background: rgba(6, 11, 14, 0.46) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(7.1px) !important;
+    -webkit-backdrop-filter: blur(7.1px) !important;
 }
 .pfp-home {
     border-radius: 100%;
@@ -43,11 +92,29 @@ body {
 }
 a {
     color: var(--text) !important;
-    text-decoration:none !important;
+    text-decoration: none !important;
 }
 
-h1, h3 {
+h1,
+h3, .form-control {
     font-weight: bold !important;
+}
+.form-control {
+    border: none !important;
+    margin-right: 6px;
+    border: 2px solid var(--primary) !important;
+    width: 100% !important;
+    margin-top: 10px;
+    background-color: var(--background) !important;
+    color: var(--text) !important
+}
+
+textarea.form-control {
+    font-size: larger !important;
+    height:fit-content !important;
+}
+.sa {
+    font-size: xx-large !important;
 }
 .img-bs {
     margin: 0 !important;
@@ -61,19 +128,19 @@ h1, h3 {
 
 .button-container {
     width: 50% !important; /* Default width for larger screens */
-  }
-  
-  @media (max-width: 768px) { /* Adjust breakpoint as needed */
-    .button-container {
-      width: 100% !important; /* Full width on smaller screens */
-    }
-  }
+}
 
+@media (max-width: 768px) {
+    /* Adjust breakpoint as needed */
+    .button-container {
+        width: 100% !important; /* Full width on smaller screens */
+    }
+}
 
 .secondary-text {
     color: var(--text-secondary) !important;
     opacity: 65%;
-    font-weight:medium  !important;
+    font-weight: medium !important;
 }
 .primary-btn {
     background-color: var(--text) !important;
@@ -93,7 +160,9 @@ h1, h3 {
     border: 1px solid var(--primary) !important;
     font-weight: bold !important;
 }
-.secondary-btn:hover, .primary-btn:hover, .accent-btn:hover {
+.secondary-btn:hover,
+.primary-btn:hover,
+.accent-btn:hover {
     background-color: var(--accent) !important;
     color: var(--text) !important;
     border: 1px solid var(--accent) !important;
@@ -103,7 +172,7 @@ h1, h3 {
 }
 
 hr {
-    border-top: 2px var(--primary) solid !important; 
+    border-top: 2px var(--primary) solid !important;
 }
 
 .loading-dots::before {
@@ -112,9 +181,15 @@ hr {
 }
 
 @keyframes loading {
-    0% { content: "."; }       /* Titik pertama */
-    33% { content: ".."; }      /* Dua titik */
-    66% { content: "..."; }     /* Tiga titik */
+    0% {
+        content: ".";
+    } /* Titik pertama */
+    33% {
+        content: "..";
+    } /* Dua titik */
+    66% {
+        content: "...";
+    } /* Tiga titik */
 }
 .bookCover {
     width: 100%;
@@ -135,12 +210,13 @@ hr {
     font-family: "Noto Serif", serif !important;
 }
 .comment-name {
-    font-weight:600 !important;
+    font-weight: 600 !important;
 }
 ::placeholder {
-    color: #C0C9DE !important;
+    color: #c0c9de !important;
 }
-@media (max-width: 768px) { /* Adjust 768px as needed */
+@media (max-width: 768px) {
+    /* Adjust 768px as needed */
     .img-bs {
         width: 100%;
     }

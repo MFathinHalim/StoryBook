@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import Loading from "@/components/Loading";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-export default function GetBook() {
+export default function EditBook() {
   const params = useParams();
   const id = params?.id; // Extract the 'id' from the dynamic route
   const [title, setTitle] = useState("");
@@ -76,6 +77,20 @@ export default function GetBook() {
 
     fetchBook();
   }, [id]); // Fetch book whenever 'id' changes
+  function formatTanggal(tanggalAwal: string) {
+    const [bulan, tanggal, tahun] = tanggalAwal.split("/"); // Memisahkan tanggal, bulan, dan tahun
+
+    const namaBulan = [ // Array nama bulan
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+
+    const bulanIndex = parseInt(bulan) - 1; // Mendapatkan index bulan (dimulai dari 0)
+    const namaBulanFormatted = namaBulan[bulanIndex];
+    return `${tanggal} ${namaBulanFormatted} ${tahun}`; // Menggabungkan kembali dengan format baru
+}
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -107,51 +122,72 @@ export default function GetBook() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
-    <div className="container mx-auto p-4">
-    <h1 className="text-2xl font-bold mb-4">Edit Book</h1>
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="title" className="block font-semibold mb-1">
-          Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          required
-        />
+    <div className="container">
+      <div className="content">
+        <div className="space-y-4">
+          <h1 className="bookTitle">Edit Book</h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="mt-2">
+              <label htmlFor="title" className="block font-semibold mb-1 h5">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="form-control background-dark text-white border-2 border-secondary rounded p-2"
+                placeholder="Enter book title..."
+                required
+              />
+            </div>
+
+            <div className="mt-2">
+              <label htmlFor="notes" className="block font-semibold mb-1 h5">
+                Notes
+              </label>
+              <ReactQuill
+                value={notes}
+                onChange={setNotes}
+                className="background-dark text-white border-2 border-secondary rounded quill-custom"
+              />
+            </div>
+
+            <div className="mt-2">
+              <label htmlFor="image" className="block font-semibold mb-1 h5">
+                Cover Image (optional)
+              </label>
+              <input
+                disabled // Keep image input disabled
+                type="file"
+                id="image"
+                accept="image/*"
+                className="form-control background-dark text-white border-2 border-secondary rounded p-2"
+              />
+            </div>
+
+            <div className="text-end mt-2">
+              <button
+                type="submit"
+                className="btn btn-sm primary-btn rounded-pill px-4 py-1"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Edit Book"}
+              </button>
+            </div>
+
+            {successMessage && (
+              <p className="text-green-500 font-semibold mt-2">
+                {successMessage}
+              </p>
+            )}
+          </form>
+        </div>
       </div>
-
-      <div>
-        <label htmlFor="notes" className="block font-semibold mb-1">
-          Notes
-        </label>
-        <ReactQuill
-          value={notes}
-          onChange={setNotes}
-          className="bg-white border border-gray-300 rounded"
-        />
-      </div>
-
-
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        disabled={loading}
-      >
-        {loading ? "Submitting..." : "Edit Book"}
-      </button>
-
-      {successMessage && (
-        <p className="text-green-500 font-semibold mt-2">{successMessage}</p>
-      )}
-    </form>
-  </div>
+    </div>
   );
 }

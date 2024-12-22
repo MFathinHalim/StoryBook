@@ -1,4 +1,5 @@
 "use client";
+import Loading from "@/components/Loading";
 import React, { useEffect, useState } from "react";
 
 export default function EditProfile() {
@@ -147,61 +148,76 @@ export default function EditProfile() {
     };
 
     if (user === null) {
-        return <h1>Loading...</h1>;
+        return <Loading />;
     }
 
     return (
-        <>
-            <h1>Edit Profile</h1>
+        <div className="container py-3">
+          <div className="text-center">
+            <div style={{ position: "relative" }}>
+              <img
+                className="pfp-edit rounded-circle"
+                src={user?.pp || ""}
+                alt={`profile picture from ${user.username}`}
+                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+              />
+            </div>
+    
             <form onSubmit={(e) => e.preventDefault()}>
+              <input type="hidden" name="_id" value={formData._id} readOnly />
+    
+              {/* Username and Name Inputs */}
+              <div className="d-flex justify-content-between mb-3">
                 <input
-                    type="hidden"
-                    name="_id"
-                    value={formData._id}
-                    readOnly
+                  type="text"
+                  className="form-control text-center sa"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
                 />
-                <div>
-                    <label>Profile Picture:</label>
-                    <input type="file" onChange={handleFileChange} accept="image/*" />
-                    {preview && <img src={preview} alt="Preview" width={100} />}
-                    <button type="button" onClick={handleFileUpload}>
-                        Upload
-                    </button>
-                    {formData.pp && !preview && <img src={formData.pp} alt="Profile" width={100} />}
-                </div>
-                <div>
-                    <label>Name:</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter your name"
-                    />
-                </div>
-                <div>
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        placeholder="Enter your username"
-                    />
-                </div>
-                <div>
-                    <label>Description:</label>
-                    <textarea
-                        name="desc"
-                        value={formData.desc}
-                        onChange={handleChange}
-                        placeholder="Enter a description about yourself"
-                    />
-                </div>
-                <button type="button" onClick={handleSave}>
-                    Save
-                </button>
+                <input
+                  type="hidden"
+                  className="form-control"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Enter your username"
+                />
+              </div>
+    
+              {/* Description Textarea */}
+              <div className="mb-3">
+                <textarea
+                  className="form-control text-center"
+                  id="desc"
+                  name="desc"
+                  value={formData.desc}
+                  onChange={handleChange}
+                  placeholder="Enter a description about yourself"
+                ></textarea>
+              </div>
+    
+              {/* Profile Picture Input */}
+              <div className="mb-3">
+                <input
+                  type="file"
+                  className="form-control"
+                  id="pp"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  disabled // Disable input for now (consider adding edit button)
+                />
+                {preview && <img src={preview} alt="Preview" width={100} className="mt-2" />}
+              </div>
+    
+              <button type="button" onClick={handleSave} className="btn btn-primary">
+                Save
+              </button>
             </form>
-        </>
-    );
+          </div>
+        </div>
+      );
 }
