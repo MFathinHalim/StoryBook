@@ -19,11 +19,11 @@ export default function Homepage() {
             });
 
             if (!response.ok) {
-                return window.location.href = "/login"
+                return 
             }
 
             const data = await response.json();
-            if (!data.token) window.location.href = "/login"
+            if (!data.token) return
             sessionStorage.setItem("token", data.token);
             return data.token;
         } catch (error) {
@@ -65,10 +65,7 @@ export default function Homepage() {
         }
     }, [user]);
 
-    // Fallback while loading user
-    if (user === null) {
-        return <Loading />;
-    }
+
 
     return (
       <div className="d-flex justify-content-center align-items-center" style={{height: "75vh", overflow: "hidden !important"}}> {/* Centering container */}
@@ -77,7 +74,7 @@ export default function Homepage() {
                   <img
                       className="pfp-landing-blur"
                       src={user?.pp || 'https://img.freepik.com/free-photo/anime-style-character-space_23-2151133935.jpg?semt=ais_hybrid'}
-                      alt={`profile picture dari ${user.username}`}
+                      alt={`profile picture dari ${user?.username || ""}`}
                   />
                   <div className="position-absolute top-50 start-50 translate-middle w-100 text-center" style={{ zIndex: 1 }}>
                       <h1 className="mt-3 mb-0 text-white">Story Book</h1>

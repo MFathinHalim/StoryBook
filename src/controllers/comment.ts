@@ -66,7 +66,7 @@ export default class Comment {
     upvote(commentId: string, user: userType): Promise<number> {
         //Fungsi ngelike
         return this.#comments
-            .findOne({ id: commentId })
+            .findOne({ _id: commentId })
             .populate("upvote", "-password") //intinya nyari dulu
             .exec()
             .then((comment: any) => {
@@ -83,7 +83,7 @@ export default class Comment {
                 }
 
                 //! Update post di database
-                return this.#comments.updateOne({ id: commentId }, { $set: { upvote: comment.upvote } }).then(() => comment.upvote);
+                return this.#comments.updateOne({ _id: commentId }, { $set: { upvote: comment.upvote } }).then(() => comment.upvote);
             });
     }
 }

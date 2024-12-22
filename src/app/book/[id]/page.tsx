@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Loading from "@/components/Loading";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 export default function GetBook() {
     const params = useParams();
@@ -45,20 +48,24 @@ export default function GetBook() {
     };
     const fetchBookAndComments = async (page = 1) => {
         try {
-            setLoading(true);
-            setError(null);
-
             const token = await refreshAccessToken();
             if (!token) throw new Error("Unable to retrieve access token");
-            //headers: { Authorization: `Bearer ${token}` },
+            if (page === 1) {
 
-            // Fetch Book
-            const bookResponse = await fetch(`/api/book/get/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!bookResponse.ok) throw new Error("Failed to fetch book details");
-            const bookData = await bookResponse.json();
-            setBook(bookData);
+                setLoading(true);
+                setError(null);
+
+
+                //headers: { Authorization: `Bearer ${token}` },
+
+                // Fetch Book
+                const bookResponse = await fetch(`/api/book/get/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!bookResponse.ok) throw new Error("Failed to fetch book details");
+                const bookData = await bookResponse.json();
+                setBook(bookData);
+            }
 
             // Fetch Comments
             const commentsResponse = await fetch(`/api/comment/${id}?page=${page}`, { headers: { Authorization: `Bearer ${token}` } }); // Get comments by book ID
@@ -76,6 +83,8 @@ export default function GetBook() {
         } catch (err) {
             return;
         } finally {
+            page = +page + 1;
+            setCurrentPage(page)
             setLoading(false);
         }
     };
@@ -89,36 +98,33 @@ export default function GetBook() {
         try {
             const token = await refreshAccessToken();
             if (!token) throw new Error("Unable to retrieve access token");
-
+    
             const response = await fetch(`/api/comment/upvote/${commentId}`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` },
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Failed to upvote comment");
             }
+    
             const data = await response.json();
-            setComments(
-                (
-                    //@ts-ignore
-                    prevComments,
-                ) =>
-                    //@ts-ignore
-                    prevComments.map((comment) => {
-                        if (comment.id === commentId) {
-                            return { ...comment, upvote: data.total }; // Update upvote from response
-                        }
-                        return comment; // Return the unchanged comment
-                    }),
+            console.log(data)
+            setComments((prevComments: any) =>
+                prevComments.map((comment: any) => {
+                    if (comment._id === commentId) {
+                        // Update jumlah upvote
+                        return { ...comment, upvote: data.total};
+                    }
+                    return comment;
+                }),
             );
         } catch (err) {
-            //@ts-ignore
-
-            alert(err.message);
+            alert((err as Error).message);
         }
     };
+    
     const handlePostComment = async () => {
         if (!newComment.trim()) return;
 
@@ -150,54 +156,108 @@ export default function GetBook() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading />;
     if (error) return <p className='text-red-500'>Error: {error}</p>;
     if (!book) return <p>No book found</p>;
+    function formatTanggal(tanggalAwal: string) {
+        const [bulan, tanggal, tahun] = tanggalAwal.split("/"); // Memisahkan tanggal, bulan, dan tahun
+
+        const namaBulan = [ // Array nama bulan
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
+
+        const bulanIndex = parseInt(bulan) - 1; // Mendapatkan index bulan (dimulai dari 0)
+        const namaBulanFormatted = namaBulan[bulanIndex];
+        return `${tanggal} ${namaBulanFormatted} ${tahun}`; // Menggabungkan kembali dengan format baru
+    }
+
 
     return (
-        <div className='container mx-auto p-4'>
-            <div className='space-y-4'>
-                <h1>{book.title}</h1>
-                <div className='bg-gray-100 p-4 rounded' dangerouslySetInnerHTML={{ __html: book.notes }} />
-                {book.cover && (
-                    <div>
-                        <img src={book.cover} alt='Book cover' className='mt-2 rounded shadow w-1/2' />
-                    </div>
-                )}
-            </div>
+        <div className='container'>
+            <div className='content'>
 
-            <div className='mt-8 comments-container'>
-                <h2 className='text-xl font-bold mb-4'>Comments</h2>
-
-                {comments?.length > 0 ? (
-                    comments?.map((comment: commentType) => (
-                        <div key={comment._id} className='border p-4 mb-2 rounded'>
-                            <p>{comment.comment}</p>
-                            <div className='flex justify-between items-center mt-2'>
-                                <button onClick={() => handleUpvote(comment.id)} className='text-blue-500 hover:text-blue-700'>
-                                    Upvote ({comment.upvote.length || 0})
-                                </button>
-                            </div>
+                <div className='space-y-4'>
+                    <h5 className="bookTitle" style={{ opacity: "78%" }}>{formatTanggal(book.time)}</h5>
+                    <h1 className="bookTitle">{book.title}</h1>
+                    <h5 className="bookTitle" style={{ opacity: "78%" }}>Write by {book.user.name}</h5>
+                    {book.cover && (
+                        <div>
+                            <img src={book.cover} alt='Book cover' className='mt-2 rounded shadow bookCover' />
                         </div>
-                    ))
-                ) : (
-                    <p>No comments yet.</p>
-                )}
-                <button
-                    onClick={() => {
-                        setCurrentPage(currentPage + 1);
-                        fetchBookAndComments(currentPage + 1);
-                    }}
-                    className='bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700'>
-                    Tampilkan Lebih Banyak
-                </button>
-
-                <div className='mt-4'>
-                    <textarea className='w-full p-2 border rounded' placeholder='Write a comment...' value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-                    <button onClick={handlePostComment} className='bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-700'>
-                        Post Comment
+                    )}
+                    <div className="d-flex gap-2 mt-2">
+                        <a href={`/book/edit/${book.id}`} className="btn secondary-btn rounded-pill">Edit</a>
+                        <button className="btn primary-btn rounded-pill">Share</button>
+                    </div>
+                    <div className='text-justify isi mt-2' dangerouslySetInnerHTML={{ __html: book.notes }} />
+                </div>
+                <h3 className='font-bold mb-2'>Comments</h3>
+                <div className='comment-form rounded background-dark text-white'>
+                    <div className='d-flex'>
+                        <div className='w-100'>
+                            <textarea
+                                className='form-control background-dark text-white border-2 border-secondary rounded p-2'
+                                placeholder='Write a comment...'
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                style={{ resize: 'none', height: '80px', wordWrap: 'break-word' }}
+                            />
+                        </div>
+                    </div>
+                    <div className='text-end mt-2'>
+                        <button
+                            onClick={handlePostComment}
+                            className='btn btn-sm primary-btn rounded-pill px-4 py-1'
+                            style={{ fontWeight: 'bold' }}
+                        >
+                            Post Comment
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    {comments?.length > 0 ? (
+                        <ul className='list-group background-dark border-0 comment-list'>
+                            {comments.map((comment: any) => (
+                                <li key={comment._id} className='my-2 list-group-item border-0 align-items-center p-0 background-dark text-white d-flex justify-content-between'>
+                                    <div className='d-flex p-0 '>
+                                        <img
+                                            src={comment.user.pp || 'https://via.placeholder.com/30'} // Use user avatar if available, otherwise placeholder
+                                            alt='User Avatar'
+                                            style={{ height: '35px' }}
+                                            className='comment-avatar rounded-circle me-2'
+                                        />
+                                        <div className='comment-user-info mb-0'>
+                                            <h5 className='comment-name mb-0'>{comment.user.name}</h5>
+                                            <p className='my-0' style={{ wordWrap: 'break-word', maxWidth: '55vw' }}>{comment.comment}</p>
+                                        </div>
+                                    </div>
+                                    <div className='comment-actions'>
+                                        <button
+                                            onClick={() => handleUpvote(comment._id)}
+                                            className='btn btn-sm secondary-btn rounded-pill '
+                                            style={{ fontWeight: "bold !important" }}
+                                        >
+                                            <FontAwesomeIcon icon={faHeart} /> {comment.upvote.length || 0}
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className='text-center'>No comments yet.</p>
+                    )}
+                    <button
+                        onClick={() => {
+                            fetchBookAndComments(currentPage + 1)
+                        }}
+                        className='btn primary-btn mt-2 cursor-default rounded-pill mb-3'
+                    >
+                        Tampilkan Lebih Banyak
                     </button>
                 </div>
+
             </div>
         </div>
     );

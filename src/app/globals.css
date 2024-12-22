@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
     --background: #060B0E;
     --text: #F8FBFC;
@@ -6,8 +6,11 @@
     --primary: #99A8C7;
     --secondary: #C0C9DE;
     --text-secondary: #ECF3F8;
+    --danger: rgb(255, 98, 98);
 }
-
+.danger-text {
+    color: var(--danger) !important;
+}
 body {
     background-color: var(--background) !important;
     color: var(--text) !important;
@@ -66,11 +69,7 @@ h1, h3 {
     }
   }
 
-@media (max-width: 768px) { /* Adjust 768px as needed */
-    .img-bs {
-        width: 100%;
-    }
-}
+
 .secondary-text {
     color: var(--text-secondary) !important;
     opacity: 65%;
@@ -116,4 +115,37 @@ hr {
     0% { content: "."; }       /* Titik pertama */
     33% { content: ".."; }      /* Dua titik */
     66% { content: "..."; }     /* Tiga titik */
+}
+.bookCover {
+    width: 100%;
+    height: auto;
+    max-height: 500px !important;
+    object-fit: cover;
+    border-radius: 24px;
+    border: 2px var(--primary) solid;
+}
+.isi {
+    text-align: justify !important;
+}
+.content {
+    padding-left: 16%;
+    padding-right: 16%;
+}
+.bookTitle {
+    font-family: "Noto Serif", serif !important;
+}
+.comment-name {
+    font-weight:600 !important;
+}
+::placeholder {
+    color: #C0C9DE !important;
+}
+@media (max-width: 768px) { /* Adjust 768px as needed */
+    .img-bs {
+        width: 100%;
+    }
+    .content {
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
