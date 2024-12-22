@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
     "imagekit": "^5.2.0",
     "jsonwebtoken": "^9.0.2",

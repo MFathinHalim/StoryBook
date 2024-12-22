@@ -1,4 +1,6 @@
 "use client";
+import BookShortcut from "@/components/Bookshortcut";
+import Loading from "@/components/Loading";
 import { useEffect, useState } from "react";
 
 export default function Homepage() {
@@ -21,7 +23,7 @@ export default function Homepage() {
             }
 
             const data = await response.json();
-            if(!data.token) window.location.href = "/login"
+            if (!data.token) window.location.href = "/login"
             sessionStorage.setItem("token", data.token);
             return data.token;
         } catch (error) {
@@ -78,32 +80,48 @@ export default function Homepage() {
 
     // Fallback while loading user
     if (user === null) {
-        return <h1>Loading...</h1>;
+        return <Loading />;
     }
 
     return (
         <>
-            <img src={user?.pp || ""} alt={`profile picture from ${user.username}`} width={500} height={500} />
-            <h1>{user?.name || user?.username}</h1>
-            <p>@{user?.username || "Guest"}</p>
-            <h2>{user?.desc || "No Description"}</h2>
-            <div>
-                <button>Wanna write something?</button>
-                <a href="/edit">Edit Profile</a>
-            </div>
-            <div>
-                <h3>Recent Stories</h3>
-                {books.length > 0 ? (
-                    <ul>
-                        {books.map((book, index) => (
-                            <li key={index}>
-                                <a href={`/book/${book?.id}`}><h3>{book?.title}</h3></a>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Tidak ada buku untuk ditampilkan.</p>
-                )}
+            <div className="container py-3">
+                <div className="text-center">
+                    <div style={{ position: 'relative' }}>
+                        <img
+                            className="pfp-home"
+                            src={user?.pp || ''}
+                            alt={`profile picture from ${user.username}`}
+                            style={{
+                                position: 'absolute',
+                                zIndex: 1,
+                            }}
+                        />
+                        <img
+                            className="pfp-home-blur"
+                            src={user?.pp || ''}
+                            alt={`profile picture from ${user.username}`}
+                        />
+                    </div>
+                    <h1 className="mt-3 mb-0">{user?.name || user?.username}</h1>
+                    <p className="secondary-text">{user?.desc || "No Description"}</p>
+                    <div className="d-flex gap-2 justify-content-center">
+                        <a href="/book/add" className="btn primary-btn">Have some idea ?</a>
+                        <a href="/edit" className="btn secondary-btn">Edit Profile</a>
+                    </div>
+                </div>
+                <div className="mt-5 d-flex flex-column align-items-center w-100">
+                    <h3 className="button-container text-left">Recent Stories</h3> {/* Teks rata kiri, lebar 100% */}
+                    {books.length > 0 ? (
+                        <div>
+                            {books.map((book, index) => (
+                                <BookShortcut key={book._id} book={book}/>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>Tidak ada buku untuk ditampilkan.</p>
+                    )}
+                </div>
             </div>
         </>
     );
