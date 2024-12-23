@@ -10,7 +10,7 @@ export default function SignUpForm() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-
+    
         const response = await fetch("/api/user/signup", {
             method: "POST",
             headers: {
@@ -18,14 +18,20 @@ export default function SignUpForm() {
             },
             body: JSON.stringify({ username, password }),
         });
-
+    
         if (response.ok) {
-            const data: any = response.json();
-            router.push("/home");
+            // Tunggu hingga data selesai diproses
+            const data = await response.json(); // Menambahkan await
+            console.log(data); // Log data setelah mendapatkan hasil
+    
+            if (data.message) {
+                router.push("/home"); // Arahkan ke halaman lain jika ada pesan
+            }
         } else {
-            console.error("Login Failed");
+            console.error("Signup failed");
         }
     };
+    
 
     return (
         <div className='container'>
@@ -33,21 +39,6 @@ export default function SignUpForm() {
                 <div className='space-y-4'>
                     <h1 className='bookTitle'>Sign Up</h1>
                     <form onSubmit={handleSubmit} className='space-y-4'>
-                        <div className='mt-2'>
-                            <label htmlFor='name' className='block font-semibold mb-1 h5'>
-                                Name
-                            </label>
-                            <input
-                                type='text'
-                                id='name'
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className='form-control background-dark text-white border-2 border-secondary rounded p-2'
-                                placeholder='Enter your name...'
-                                required
-                            />
-                        </div>
-
                         <div className='mt-2'>
                             <label htmlFor='username' className='block font-semibold mb-1 h5'>
                                 Username
