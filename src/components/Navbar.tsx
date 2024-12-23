@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 export default function Navbar(): JSX.Element {
   const [isLanding, setLanding] = useState(false);
-
+  useEffect(() => {
+    // Hanya jalankan di client-side
+    import('bootstrap/dist/js/bootstrap.bundle.min.js');
+  }, []); // Hanya dipanggil sekali setelah render pertama
   useEffect(() => {
     if (
       window.location.pathname === "/" ||
@@ -83,7 +85,6 @@ export default function Navbar(): JSX.Element {
                 }}
               >
                 <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-                Logout
               </button>
             </li>
           )}
