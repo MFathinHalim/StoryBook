@@ -84,7 +84,7 @@ export default function Navbar(): JSX.Element {
                   transition: "background-color 0.3s ease",
                 }}
               >
-                <FontAwesomeIcon icon={faSignOutAlt} className="me-2" /> Log Out
+                <FontAwesomeIcon icon={faSignOutAlt} /> Log Out
               </button>
             </li>
           )}
