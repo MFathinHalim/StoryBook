@@ -7,7 +7,7 @@ export default function Navbar(): JSX.Element {
   const [isLanding, setLanding] = useState(false);
   useEffect(() => {
     // Hanya jalankan di client-side
-    import('bootstrap/dist/js/bootstrap.bundle.min.js');
+    import('bootstrap/dist/js/bootstrap.bundle');
   }, []); // Hanya dipanggil sekali setelah render pertama
   useEffect(() => {
     if (
