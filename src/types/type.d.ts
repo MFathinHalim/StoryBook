@@ -6,6 +6,7 @@ declare type bookType = {
     notes: string;
     time?: string;
     cover?: string;
+    tag?: string;
 }
 
 declare type commentType = {

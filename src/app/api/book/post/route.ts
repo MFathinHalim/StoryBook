@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
   const book = {
     title: formData.get("title") as string,
     notes: formData.get("notes") as string,
+    tag: formData.get("tag") as string,
   };
 
   let img = ""; // Initialize image URL

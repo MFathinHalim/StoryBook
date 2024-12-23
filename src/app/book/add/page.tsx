@@ -13,6 +13,7 @@ export default function AddBooks() {
     const [successMessage, setSuccessMessage] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [imagee, setImagee] = useState<File | null | string | any>("");
+    const [tag, setTag] = useState<string>(""); // To hold either "Publish" or "Question"
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -46,6 +47,12 @@ export default function AddBooks() {
         }
     };
 
+    const handleToggle = (selectedTag: string) => {
+        console.log(tag);
+        console.log(selectedTag);
+        setTag((prevTag) => (prevTag === selectedTag ? "" : selectedTag)); // Toggle logic
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -54,6 +61,7 @@ export default function AddBooks() {
         const formData = new FormData();
         formData.append("title", title);
         formData.append("notes", notes);
+        formData.append("tag", tag); // Include the tag
         if (image) {
             formData.append("image", image);
         }
@@ -80,6 +88,7 @@ export default function AddBooks() {
             setSuccessMessage("Book added successfully!");
             setTitle("");
             setNotes("");
+            setTag(""); // Reset tag after submission
             setImage(null);
         } catch (error: any) {
             alert(error.message);
@@ -134,7 +143,22 @@ export default function AddBooks() {
                             />
                         </div>
 
-                        <div className='text-end mt-2'>
+                        <div className='d-flex justify-content-between align-items-center mt-3 '>
+                            <div className='d-flex gap-2 align-items-center'>
+                                <button
+                                    type='button'
+                                    onClick={() => handleToggle("Publish")}
+                                    className={`btn ${tag === "Publish" ? "btn-light" : "btn-outline-light"} rounded-pill px-4 py-1`}>
+                                    Publish
+                                </button>
+                                <button
+                                    type='button'
+                                    onClick={() => handleToggle("Question")}
+                                    className={`btn ${tag === "Question" ? "btn-light" : "btn-outline-light"} rounded-pill px-4 py-1`}>
+                                    Question?
+                                </button>
+                            </div>
+
                             <button type='submit' className='btn btn-sm primary-btn rounded-pill px-4 py-1' disabled={loading}>
                                 {loading ? "Submitting..." : "Add Book"}
                             </button>

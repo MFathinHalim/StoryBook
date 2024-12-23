@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 export default function Homepage() {
     const [user, setUser] = useState<userType | null>(null); // User state
     const [books, setBooks] = useState<bookType[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1); // Untuk mengelola halaman
+    const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada buku untuk dimuat
 
     const refreshAccessToken = async () => {
         try {
@@ -19,11 +22,11 @@ export default function Homepage() {
             });
 
             if (!response.ok) {
-                return window.location.href = "/login"
+                return window.location.href = "/login";
             }
 
             const data = await response.json();
-            if (!data.token) window.location.href = "/login"
+            if (!data.token) window.location.href = "/login";
             sessionStorage.setItem("token", data.token);
             return data.token;
         } catch (error) {
@@ -53,19 +56,7 @@ export default function Homepage() {
 
                 const check = await response.json();
                 setUser(check);
-
-                if (check._id && check._id !== "system") {
-                    const fetchBook = await fetch(`/api/book/get/userId/${check._id}`, {
-                        headers: { Authorization: `Bearer ${tokenTemp}` },
-                    });
-
-                    if (!fetchBook.ok) {
-                        console.error("Error Fetching Book");
-                        throw new Error("Error");
-                    }
-                    const booksFetch = await fetchBook.json();
-                    setBooks(booksFetch);
-                }
+                fetchBooks(check._id, tokenTemp, currentPage); // Fetch books after user data is loaded
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setUser(null);
@@ -76,16 +67,50 @@ export default function Homepage() {
         if (user === null) {
             fetchUserData();
         }
-    }, [user]);
+    }, [user, currentPage]);
+
+    async function fetchBooks(userId: string, token: string, page: number) {
+        try {
+            const fetchBook = await fetch(`/api/book/get/userId/${userId}?page=${page}&limit=5`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!fetchBook.ok) {
+                console.error("Error Fetching Books");
+                throw new Error("Error fetching books");
+            }
+            const booksFetch = await fetchBook.json();
+            if (booksFetch.books.length > 0 && page !== 1) {
+                setBooks((prevBooks) => [...prevBooks, ...booksFetch.books]);
+            } else if(page === 1) {
+                setBooks(booksFetch.books)
+            }
+             else {
+                setHasMore(false); // No more books to load
+            }
+        } catch (error) {
+            console.error("Error fetching books:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // Infinite scroll logic - scroll full page
+    const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+        const bottom = e.currentTarget.scrollHeight === e.currentTarget.scrollTop + e.currentTarget.clientHeight;
+        if (bottom && hasMore && !loading) {
+            setCurrentPage((prevPage) => prevPage + 1); // Load next page
+        }
+    };
 
     // Fallback while loading user
-    if (user === null) {
+    if (user === null || loading) {
         return <Loading />;
     }
 
     return (
-        <>
-            <div className="container py-3">
+        <div onScroll={handleScroll}>
+            <div className="container py-3" >
                 <div className="text-center">
                     <div style={{ position: 'relative' }}>
                         <img
@@ -115,14 +140,15 @@ export default function Homepage() {
                     {books.length > 0 ? (
                         <div>
                             {books.map((book, index) => (
-                                <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken}/>
+                                <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
                             ))}
+                            {loading && <Loading />}
                         </div>
                     ) : (
-                        <p>Tidak ada buku untuk ditampilkan.</p>
+                        <p>No books to display.</p>
                     )}
                 </div>
             </div>
-        </>
+        </div>
     );
 }

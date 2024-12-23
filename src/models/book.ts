@@ -8,6 +8,7 @@ const bookSchema = new Schema<bookType>({
   notes: String,
   time: String,
   cover: String,
+  tag: String,
 });
 
 const bookModel: Model<bookType> = models.book || model<bookType>("book", bookSchema);
