@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   try {
     let result = await userInstance.login(username, password);
-    
+    console.log(username);
 
     if (result.username === "system") {
       return NextResponse.json({ error: 'System user not allowed' }, { status: 400 });

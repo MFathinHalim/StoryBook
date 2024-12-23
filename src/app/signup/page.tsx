@@ -21,10 +21,7 @@ export default function SignUpForm() {
 
         if (response.ok) {
             const data: any = response.json();
-            if (data.token) {
-                sessionStorage.setItem("token", data.token);
-                router.push("/home");
-            }
+            router.push("/home");
         } else {
             console.error("Login Failed");
         }
