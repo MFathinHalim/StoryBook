@@ -6,7 +6,7 @@ import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 export default function Navbar(): JSX.Element {
   const [isLanding, setLanding] = useState(false);
   useEffect(() => {
-    // Hanya jalankan di client-side
+    //@ts-ignore
     import('bootstrap/dist/js/bootstrap.bundle');
   }, []); // Hanya dipanggil sekali setelah render pertama
   useEffect(() => {
