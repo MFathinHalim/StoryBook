@@ -115,7 +115,7 @@ export default function Homepage() {
                     {books.length > 0 ? (
                         <div>
                             {books.map((book, index) => (
-                                <BookShortcut key={book._id} book={book}/>
+                                <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken}/>
                             ))}
                         </div>
                     ) : (

@@ -84,11 +84,8 @@ export default class Books {
     const objectId = mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : null;
     const book = await this.#books
       .findOne({ $or: [{ _id: objectId }, { id: id }] })
-      .populate("user", "-password")
-      .populate("user", "-desc")
-      .populate("user", "-bookmark")
+      .populate("user", "name")
       .exec();
-
     return book;
   }
   //* Get Books From User Function

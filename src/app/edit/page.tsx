@@ -1,18 +1,19 @@
 "use client";
 import Loading from "@/components/Loading";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function EditProfile() {
-    const [user, setUser] = useState<any | null>(null); // User state
+    const [user, setUser] = useState<any | null>(null);
     const [formData, setFormData] = useState({
         _id: "",
         name: "",
         username: "",
         desc: "",
-        pp: "",
-    }); // Form state
-    const [file, setFile] = useState<File | null>(null); // File chooser state
-    const [preview, setPreview] = useState<string | null>(null); // Preview state
+    });
+    const [preview, setPreview] = useState<string | null>(null);
+    const [image, setImage] = useState<File | null>(null);
+    const [isSaving, setIsSaving] = useState(false); // NEW: State for loading
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const refreshAccessToken = async () => {
         try {
@@ -22,7 +23,7 @@ export default function EditProfile() {
 
             const response = await fetch("/api/user/refreshToken", {
                 method: "POST",
-                credentials: "include", // Ensure cookies are sent
+                credentials: "include",
             });
 
             if (!response.ok) {
@@ -60,7 +61,13 @@ export default function EditProfile() {
 
                 const check = await response.json();
                 setUser(check);
-                setFormData(check);
+                setFormData({
+                    _id: check._id,
+                    name: check.name,
+                    username: check.username,
+                    desc: check.desc,
+                });
+                setPreview(check.pp);
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setUser(null);
@@ -72,52 +79,21 @@ export default function EditProfile() {
         }
     }, [user]);
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setImage(file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0] || null;
-        setFile(selectedFile);
-        if (selectedFile) {
-            const objectUrl = URL.createObjectURL(selectedFile);
-            setPreview(objectUrl);
-        } else {
-            setPreview(null);
-        }
-    };
-
-    const handleFileUpload = async () => {
-        if (!file) {
-            alert("Please choose a file first!");
-            return;
-        }
-
-        try {
-            const uploadData = new FormData();
-            uploadData.append("file", file);
-
-            const response = await fetch("/api/upload", {
-                method: "POST",
-                body: uploadData,
-            });
-
-            if (!response.ok) {
-                console.error("Failed to upload file");
-                return;
-            }
-
-            const data = await response.json();
-            setFormData((prev) => ({ ...prev, pp: data.url }));
-            setPreview(null); // Clear the preview after successful upload
-            alert("Profile picture updated successfully!");
-        } catch (error) {
-            console.error("Error uploading file:", error);
-        }
-    };
-
     const handleSave = async () => {
+        setIsSaving(true); // Start loading
         try {
             const tokenTemp = await refreshAccessToken();
             if (!tokenTemp) {
@@ -125,13 +101,22 @@ export default function EditProfile() {
                 return;
             }
 
+            const formDataToSend = new FormData();
+            formDataToSend.append("_id", formData._id);
+            formDataToSend.append("name", formData.name);
+            formDataToSend.append("username", formData.username);
+            formDataToSend.append("desc", formData.desc);
+
+            if (image) {
+                formDataToSend.append("image", image);
+            }
+
             const response = await fetch("/api/user/update", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${tokenTemp}`,
                 },
-                body: JSON.stringify(formData),
+                body: formDataToSend,
             });
 
             if (!response.ok) {
@@ -144,6 +129,14 @@ export default function EditProfile() {
             alert("Profile updated successfully!");
         } catch (error) {
             console.error("Error saving profile:", error);
+        } finally {
+            setIsSaving(false); // Stop loading
+        }
+    };
+
+    const handleProfileClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
         }
     };
 
@@ -153,71 +146,81 @@ export default function EditProfile() {
 
     return (
         <div className="container py-3">
-          <div className="text-center">
-            <div style={{ position: "relative" }}>
-              <img
-                className="pfp-edit rounded-circle"
-                src={user?.pp || ""}
-                alt={`profile picture from ${user.username}`}
-                style={{ width: "150px", height: "150px", objectFit: "cover" }}
-              />
+            <div className="text-center">
+                <div
+                    style={{ position: "relative", cursor: "pointer" }}
+                    onClick={handleProfileClick}
+                >
+                    <img
+                        className="pfp-home"
+                        src={preview || ""}
+                        alt={`profile picture from ${user.username}`}
+                        style={{
+                            position: "absolute",
+                            zIndex: 1,
+                        }}
+                    />
+                    <img
+                        className="pfp-home-blur"
+                        src={preview || ""}
+                        alt={`profile picture from ${user.username}`}
+                    />
+                </div>
+                <label
+                    htmlFor="image"
+                    className="mt-2 p"
+                    style={{ fontFamily: "Montserrat", fontWeight: "bold" }}
+                >
+                    <strong className="danger-text">*</strong> Click profile picture to change
+                </label>
+
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    onChange={handleFileChange}
+                />
+
+                <form onSubmit={(e) => e.preventDefault()}>
+                    <input type="hidden" name="_id" value={formData._id} readOnly />
+
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            className="form-control text-center"
+                            style={{ fontSize: "xx-large" }}
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="Enter your name"
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <textarea
+                            className="form-control text-center"
+                            style={{ fontSize: "xx-large" }}
+                            id="desc"
+                            name="desc"
+                            value={formData.desc}
+                            onChange={handleChange}
+                            placeholder="Enter a description about yourself"
+                        ></textarea>
+                    </div>
+
+
+                        <button
+                            type="button"
+                            onClick={handleSave}
+                            className="btn primary-btn btn-lg"
+                            disabled={isSaving}
+                        >
+                                {isSaving ? "Submitting..." : "Save"}
+                        </button>
+                </form>
             </div>
-    
-            <form onSubmit={(e) => e.preventDefault()}>
-              <input type="hidden" name="_id" value={formData._id} readOnly />
-    
-              {/* Username and Name Inputs */}
-              <div className="d-flex justify-content-between mb-3">
-                <input
-                  type="text"
-                  className="form-control text-center sa"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your name"
-                />
-                <input
-                  type="hidden"
-                  className="form-control"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Enter your username"
-                />
-              </div>
-    
-              {/* Description Textarea */}
-              <div className="mb-3">
-                <textarea
-                  className="form-control text-center"
-                  id="desc"
-                  name="desc"
-                  value={formData.desc}
-                  onChange={handleChange}
-                  placeholder="Enter a description about yourself"
-                ></textarea>
-              </div>
-    
-              {/* Profile Picture Input */}
-              <div className="mb-3">
-                <input
-                  type="file"
-                  className="form-control"
-                  id="pp"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  disabled // Disable input for now (consider adding edit button)
-                />
-                {preview && <img src={preview} alt="Preview" width={100} className="mt-2" />}
-              </div>
-    
-              <button type="button" onClick={handleSave} className="btn btn-primary">
-                Save
-              </button>
-            </form>
-          </div>
         </div>
-      );
+    );
 }

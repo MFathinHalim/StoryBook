@@ -111,7 +111,6 @@ h3, .form-control {
 
 textarea.form-control {
     font-size: larger !important;
-    height:fit-content !important;
 }
 .sa {
     font-size: xx-large !important;
@@ -119,7 +118,9 @@ textarea.form-control {
 .img-bs {
     margin: 0 !important;
     padding: 0 !important;
-    width: 50%;
+    height: 400px !important;
+    width: 650px !important;
+    max-width: 100% !important;
     object-fit: cover;
     border-radius: 17px;
     border: 1px var(--primary) solid;

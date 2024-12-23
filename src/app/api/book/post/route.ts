@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const file = formData.get("image") as File | null; // Image file (optional)
 
   // If there is a file, process and upload it
-  /*if (file) {
+  if (file) {
     const buffer = await file.arrayBuffer(); // Convert File object to buffer
 
     // Upload image to ImageKit (replace with your upload logic)
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     // Append timestamp to avoid caching issues
     const currentEpochTime = Date.now();
     img = `${uploadResult.url}?updatedAt=${currentEpochTime}`;
-  }*/
+  }
 
   const post = await bookInstance.UserAction().newPost(book, checkToken, img);
 
