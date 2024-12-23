@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     if(!user) return NextResponse.json({msg: "Invalid Authentication."}, { status: 401 })
 
     const id = req.nextUrl.pathname.split("/")[3]
-    const book = await bookInstance.GetBooks(id)
+    const book = await bookInstance.GetBook(id)
 
     if (!book) return NextResponse.json({ msg: "Book not found!" }, { status: 404 })
 
