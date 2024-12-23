@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const books = await bookInstance.GetBooksFromQuestion(page, limit);
 
     if (books.length === 0) {
-      return NextResponse.json({ msg: "No published books found." }, { status: 404 });
+      return NextResponse.json({});
     }
 
     return NextResponse.json({ books });

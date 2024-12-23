@@ -41,7 +41,14 @@ export default function Navbar(): JSX.Element {
         <a className="navbar-brand" href="/home">
           <h1 className="p-0 m-0">Story Book</h1>
         </a>
+        <li className="nav-item active">
+        <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+      </li>
+      <li className="nav-item">
+        <a className="nav-link" href="#">Link</a>
+      </li>
         {isLanding && (
+          <>
           <button
             onClick={handleLogout}
             className="btn btn-sm btn-transparent danger-text ms-auto"
@@ -55,6 +62,7 @@ export default function Navbar(): JSX.Element {
           >
             <FontAwesomeIcon icon={faSignOutAlt} />
           </button>
+          </>
         )}
       </nav>
     </>

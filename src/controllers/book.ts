@@ -89,12 +89,10 @@ export default class Books {
   async GetBooksFromUser(userId: string, page: number = 1, limit: number = 5): Promise<bookType[]> {
     const skip = (page - 1) * limit;
     try {
-      console.log(userId)
       const books = await bookModel.find({ user: new mongoose.Types.ObjectId(userId) })
         .skip(skip)
         .limit(limit)
         .exec();
-        console.log(books)
       return books;
     } catch (error) {
       console.error("Error fetching books from user:", error);
