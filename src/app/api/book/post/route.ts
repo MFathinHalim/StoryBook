@@ -10,7 +10,7 @@ const userInstance = Users.getInstances();
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
 
-  const headersList = headers();
+  const headersList: any = headers();
   const authHeader = headersList.get("authorization");
   const token = authHeader && authHeader.split(" ")[1]; // Extract token from Bearer
   if (!token) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
