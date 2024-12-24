@@ -67,6 +67,7 @@ export default class Books {
       const books = await this.#books
         .find()
         .populate("user", "name")
+        .sort({ _id: -1 })
         .skip(skip)
         .limit(limit)
         .exec();
@@ -80,6 +81,7 @@ export default class Books {
     const objectId = mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : null;
     const book = await this.#books
       .findOne({ $or: [{ _id: objectId }, { id: id }] })
+      .sort({ _id: -1 })
       .populate("user", "name")
       .exec();
     return book;
@@ -91,6 +93,7 @@ export default class Books {
     try {
       const books = await bookModel.find({ user: new mongoose.Types.ObjectId(userId) })
         .skip(skip)
+        .sort({ _id: -1 })
         .limit(limit)
         .exec();
       return books;
@@ -106,6 +109,7 @@ export default class Books {
     try {
       const books = await this.#books
         .find({ tag: "Publish" })
+        .sort({ _id: -1 })
         .skip(skip)
         .limit(limit)
         .exec();
@@ -121,7 +125,8 @@ export default class Books {
     const skip = (page - 1) * limit;
     try {
       const books = await this.#books
-        .find({ tag: "Question" })
+      .find({ tag: "Question" })
+      .sort({ _id: -1 })
         .skip(skip)
         .limit(limit)
         .exec();

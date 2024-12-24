@@ -57,6 +57,7 @@ export default class Comment {
             .populate("user", "-password")
             .populate("user", "-desc")
             .populate("user", "-bookmark")
+            .sort({ _id: -1 })
             .sort({ upvote: -1 })
             .limit(limit)
             .skip(skip)
