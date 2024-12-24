@@ -66,7 +66,7 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                     <img className={window.location.pathname === '/book/publish' ? 'img-bs-publish' : 'img-bs'} src={book.cover || "https://4kwallpapers.com/images/walls/thumbs_3t/18164.jpg"} alt={book.title} />
                 </a>
                 <div className='mt-2 d-flex justify-content-between w-100'>
-                    <a href={`/book/${book._id}`} className='text-center'>
+                    <a href={`/book/${book._id}`}>
                         <h3 className='mt-1'>{book.title}</h3>
                     </a>
                     <div className='d-flex'>
