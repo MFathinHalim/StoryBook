@@ -181,7 +181,7 @@ export default function GetBook() {
                 <div className='space-y-4'>
                     <h5 className="bookTitle" style={{ opacity: "78%" }}>{formatTanggal(book.time)}</h5>
                     <h1 className="bookTitle">{book.title}</h1>
-                    <h5 className="bookTitle" style={{ opacity: "78%" }}>Write by {book.user.name}</h5>
+                    <h5 className="bookTitle" style={{ opacity: "78%" }}>Write by {book.user.name || book.user.username }</h5>
                     {book.cover && (
                         <div>
                             <img src={book.cover} alt='Book cover' className='mt-2 rounded shadow bookCover' />
