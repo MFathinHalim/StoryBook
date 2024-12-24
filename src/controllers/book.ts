@@ -83,6 +83,7 @@ export default class Books {
       .findOne({ $or: [{ _id: objectId }, { id: id }] })
       .sort({ _id: -1 })
       .populate("user", "name")
+      .populate("user", "username")
       .exec();
     return book;
   }
