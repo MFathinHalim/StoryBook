@@ -46,7 +46,8 @@ export default function Navbar(): JSX.Element {
       className="navbar navbar-expand-lg navbar-dark px-3 sticky-top background-dark"
     >
       <a className="navbar-brand" href="/home" style={{ color: "#fff", fontWeight: "bold", fontSize: "1.5rem" }}>
-        Story Book
+      <img src="https://ik.imagekit.io/9hpbqscxd/SG/image-86.jpg?updatedAt=1705798245623" width="35" height="35" className="d-inline-block align-top rounded-circle me-2" alt=""/>
+      Story Book
       </a>
       <button
         className="navbar-toggler"

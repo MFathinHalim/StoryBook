@@ -5,9 +5,17 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-    title: "Storybook",
-    description: "Where your story playing",
-};
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Story Book',
+      description: 'the place where your story is written',
+      images: "https://ik.imagekit.io/9hpbqscxd/SG/image-86.jpg?updatedAt=1705798245623",
+    },
+    icons: {
+        icon: "https://ik.imagekit.io/9hpbqscxd/SG/image-86.jpg?updatedAt=1705798245623", // Menentukan ikon favicon
+    },
+    title: "Story Book"
+  }
 
 export default function RootLayout({
     children,

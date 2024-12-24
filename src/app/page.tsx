@@ -78,7 +78,7 @@ export default function Homepage() {
                   />
                   <div className="position-absolute top-50 start-50 translate-middle w-100 text-center" style={{ zIndex: 1 }}>
                       <h1 className="mt-3 mb-0 text-white">Story Book</h1>
-                      <h3 className="mt-0 mb-0 secondary-text text-white">Where your stories begin</h3> {/* Text white for visibility */}
+                      <h3 className="mt-0 mb-0 secondary-text text-white">The place where your story is written</h3> {/* Text white for visibility */}
                       <div className="d-flex gap-2 mt-3 justify-content-center">
                           <a href="/home" className="btn primary-btn">Have some Ideas?</a>
                       </div>
