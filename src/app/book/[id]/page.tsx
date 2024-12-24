@@ -191,7 +191,7 @@ export default function GetBook() {
                         <a href={`/book/edit/${book.id}`} className="btn secondary-btn rounded-pill">Edit</a>
                         <button className="btn primary-btn rounded-pill">Share</button>
                     </div>
-                    <div className='text-justify isi mt-2' dangerouslySetInnerHTML={{ __html: book.notes }} />
+                    <div className='text-justify isi mt-2 karla' dangerouslySetInnerHTML={{ __html: book.notes }} />
                 </div>
                 <h3 className='font-bold mb-2'>Comments</h3>
                 <div className='comment-form rounded background-dark text-white'>
@@ -236,7 +236,7 @@ export default function GetBook() {
                                     <div className='comment-actions'>
                                         <button
                                             onClick={() => handleUpvote(comment._id)}
-                                            className='btn btn-sm secondary-btn rounded-pill '
+                                            className='btn btn-sm danger-btn rounded-pill '
                                             style={{ fontWeight: "bold !important" }}
                                         >
                                             <FontAwesomeIcon icon={faHeart} /> {comment.upvote.length || 0}

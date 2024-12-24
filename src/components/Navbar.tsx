@@ -63,12 +63,13 @@ export default function Navbar(): JSX.Element {
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="navbar-nav ms-auto">
           <li className="nav-item">
-            <a className="nav-link text-light" href="/book/questions">
+            <a className="nav-link text-light" style={{ fontWeight: "bold !important" }} href="/book/questions">
               Questions
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link text-light" href="/book/publish">
+            <a className="nav-link text-light" style={{ fontWeight: "bold !important" }}
+              href="/book/publish">
               Novel
             </a>
           </li>

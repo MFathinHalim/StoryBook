@@ -141,7 +141,7 @@ export default function Homepage() {
                         <img className='pfp-home-blur' src={user?.pp || ""} alt={`profile picture from ${user.username}`} />
                     </div>
                     <h1 className='mt-3 mb-0'>{user?.name || user?.username}</h1>
-                    <p className='secondary-text'>{user?.desc || "No Description"}</p>
+                    <div className='secondary-text karla' dangerouslySetInnerHTML={{ __html: user?.desc || "No Description" }} />
                     <div className='d-flex gap-2 justify-content-center'>
                         <a href='/book/add' className='btn primary-btn'>
                             Have some idea ?
@@ -151,12 +151,14 @@ export default function Homepage() {
                         </a>
                     </div>
                 </div>
-                <div className='mt-5 d-flex flex-column align-items-center w-100'>
+                <div className='mt-5 w-100'>
                     <h3 className='button-container text-left'>Recent Stories</h3> {/* Teks rata kiri, lebar 100% */}
                     {books.length > 0 ? (
-                        <div>
+                        <div className="row">
                             {books.map((book, index) => (
+                                <div key={book._id} className="col-md-6 col-sm-6">
                                 <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
+                            </div>
                             ))}
                             {loading && <Loading />}
                         </div>

@@ -1,6 +1,9 @@
 "use client";
 import Loading from "@/components/Loading";
 import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import 'react-quill/dist/quill.snow.css'; // Import CSS Quill
 
 export default function EditProfile() {
     const [user, setUser] = useState<any | null>(null);
@@ -139,10 +142,15 @@ export default function EditProfile() {
             fileInputRef.current.click();
         }
     };
+    const handleQuillChange = (value: string) => {
+        setFormData({ ...formData, desc: value });
+    };
+
 
     if (user === null) {
         return <Loading />;
     }
+
 
     return (
         <div className="container py-3">
@@ -155,10 +163,7 @@ export default function EditProfile() {
                         className="pfp-home"
                         src={preview || ""}
                         alt={`profile picture from ${user.username}`}
-                        style={{
-                            position: "absolute",
-                            zIndex: 1,
-                        }}
+                        style={{ position: "absolute", zIndex: 1 }}
                     />
                     <img
                         className="pfp-home-blur"
@@ -199,26 +204,31 @@ export default function EditProfile() {
                     </div>
 
                     <div className="mb-3">
-                        <textarea
-                            className="form-control text-center"
-                            style={{ fontSize: "xx-large" }}
-                            id="desc"
-                            name="desc"
+                        <ReactQuill
+                            theme="snow"
                             value={formData.desc}
-                            onChange={handleChange}
+                            onChange={handleQuillChange}
                             placeholder="Enter a description about yourself"
-                        ></textarea>
+                            modules={{
+                                toolbar: [
+                                    [{ header: [1, 2, 3, false] }],
+                                    ["bold", "italic", "underline", "strike"],
+                                    [{ list: "ordered" }, { list: "bullet" }],
+                                    ["link", "image"],
+                                    ["clean"],
+                                ],
+                            }}
+                        />
                     </div>
 
-
-                        <button
-                            type="button"
-                            onClick={handleSave}
-                            className="btn primary-btn btn-lg"
-                            disabled={isSaving}
-                        >
-                                {isSaving ? "Submitting..." : "Save"}
-                        </button>
+                    <button
+                        type="button"
+                        onClick={handleSave}
+                        className="btn primary-btn btn-lg"
+                        disabled={isSaving}
+                    >
+                        {isSaving ? "Submitting..." : "Save"}
+                    </button>
                 </form>
             </div>
         </div>

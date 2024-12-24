@@ -135,7 +135,7 @@ export default function Questions() {
                         <img className="pfp-home-blur" src={user?.pp || ""} alt={`profile picture from ${user.username}`} />
                     </div>
                     <h1 className="mt-3 mb-0">{user?.name || user?.username}</h1>
-                    <p className="secondary-text">{user?.desc || "No Description"}</p>
+                    <div className='secondary-text' dangerouslySetInnerHTML={{ __html: user?.desc || "No Description" }} />
                     <div className="d-flex gap-2 justify-content-center">
                         <a href="/book/add" className="btn primary-btn">
                             Ask a Question?
@@ -145,19 +145,26 @@ export default function Questions() {
                         </a>
                     </div>
                 </div>
-                <div className="mt-5 d-flex flex-column align-items-center w-100">
+                <div className="mt-5 w-100">
                     <h3 className="button-container text-left">Recent Questions</h3> {/* Teks rata kiri, lebar 100% */}
                     {questions.length > 0 ? (
-                        <div>
+                        <div className="row">
                             {questions.map((question) => (
-                                <BookShortcut key={question._id} book={question} refreshAccessToken={refreshAccessToken} />
+                                <div key={question._id} className="col-md-6 col-sm-6">
+                                    <BookShortcut book={question} refreshAccessToken={refreshAccessToken} />
+                                </div>
                             ))}
-                            {loading && <Loading />}
+                            {loading && (
+                                <div className="col-12">
+                                    <Loading />
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <p>No questions to display.</p>
                     )}
                 </div>
+
             </div>
             <div ref={ref} />
         </div>

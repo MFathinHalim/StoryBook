@@ -63,7 +63,7 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
         <>
             <div className='d-flex flex-column align-items-center w-100 mb-3'>
                 <a href={`/book/${book._id}`} className='text-center'>
-                    <img className='img-bs' src={book.cover || "https://4kwallpapers.com/images/walls/thumbs_3t/18164.jpg"} alt={book.title} />
+                    <img className={window.location.pathname === '/book/publish' ? 'img-bs-publish' : 'img-bs'} src={book.cover || "https://4kwallpapers.com/images/walls/thumbs_3t/18164.jpg"} alt={book.title} />
                 </a>
                 <div className='mt-2 d-flex justify-content-between w-100'>
                     <a href={`/book/${book._id}`} className='text-center'>
@@ -75,9 +75,14 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                             <FontAwesomeIcon icon={faShare} />
                         </button>
                         {/* Delete Button */}
-                        <button className='btn btn-transparent danger-text btn-lg p-0' onClick={handleDelete}>
-                            <FontAwesomeIcon icon={faTrash} />
-                        </button>
+                        {window.location.pathname === '/home' && (
+                            <button
+                                className="btn btn-transparent danger-text btn-lg p-0"
+                                onClick={handleDelete}
+                            >
+                                <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
