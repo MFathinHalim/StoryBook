@@ -1,20 +1,17 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-import dotenv from "dotenv";
-dotenv.config();
-
 class AiController {
-  private readonly GoogleGenerativeAI = GoogleGenerativeAI;
-
-  constructor() {
-    this.GoogleGenerativeAI = new GoogleGenerativeAI();
-  }
-
   async generateText(prompt: string): Promise<string> {
     try {
-        const genAI = new this.GoogleGenerativeAI(process.env.GEMINI);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const response = await model.generateContent(prompt);
-      return response.response.text();
+        var char = " ada yang bertanya tentang : ' ".replace(/ /g, "%20");
+        const apiurl: string = `https://sandipbaruwal.onrender.com/gemini?prompt=${encodeURIComponent(
+          char +
+            prompt )}' &uid=62825372`;// Suggested code may be subject to a license. Learn more: ~LicenseLog:237231439.
+        const response = await fetch(apiurl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.result;
+
     } catch (error) {
       console.error("Error generating text:", error);
       throw error; // Re-throw the error to be handled by the calling function
