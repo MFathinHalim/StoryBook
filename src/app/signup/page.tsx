@@ -1,10 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function SignUpForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
 
@@ -72,15 +75,25 @@ export default function SignUpForm() {
                             <label htmlFor='password' className='block font-semibold mb-1 h5'>
                                 Password
                             </label>
-                            <input
-                                type='password'
-                                id='password'
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className='form-control background-dark text-white border-2 border-secondary rounded p-2'
-                                placeholder='Enter your password...'
-                                required
-                            />
+                            <div className='flex items-center'>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    id='password'
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className='form-control background-dark text-white border-2 border-secondary rounded p-2 flex-grow'
+                                    placeholder='Enter your password...'
+                                    required
+                                />
+                                <button
+                                    type='button'
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className='secondary-btn btn mt-2 '
+                                    aria-label='Toggle Password Visibility'
+                                >
+                                    Show Password <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                </button>
+                            </div>
                         </div>
                         <h5 className='mt-3'>
                             Already have an account?{" "}
