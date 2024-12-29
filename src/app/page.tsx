@@ -80,7 +80,7 @@ export default function Homepage() {
                       <h1 className="mt-3 mb-0 text-white">Story Book</h1>
                       <h3 className="mt-0 mb-0 secondary-text text-white">The place where your story is written</h3> {/* Text white for visibility */}
                       <div className="d-flex gap-2 mt-3 justify-content-center">
-                          <a href="/home" className="btn primary-btn">Have some Ideas?</a>
+                          <a href={user?.username ? "/home" : "/login"} className="btn primary-btn">Have some Ideas?</a>
                       </div>
                   </div>
               </div>
