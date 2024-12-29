@@ -60,7 +60,7 @@ export default function Navbar(): JSX.Element {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent form submission
     if (inputValue.trim()) {
-      window.location.href = `/search/${encodeURIComponent(inputValue)}?tag=${encodeURIComponent(tag)}`;
+      window.location.href = `/search/${encodeURIComponent(inputValue)}?tag=${encodeURIComponent(tag) || 'Publish'}`;
     }
   };
 
