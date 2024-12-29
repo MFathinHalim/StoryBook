@@ -12,12 +12,11 @@ export async function POST(req: NextRequest) {
 
   try {
     let result = await userInstance.login(username, password);
-    console.log(username);
 
-    if (result.username === "system") {
-      return NextResponse.json({ error: 'System user not allowed' }, { status: 400 });
+    if (result.name === "Password or Username is incorrect!") {
+      return NextResponse.json({ message: "The Password or Username is Incorrect" }, { status: 401 });
     }
-    
+    console.log(result)
     const tokenFunction = await userInstance.createAccessToken(result._id.toString());
     const token = tokenFunction.newToken;
 

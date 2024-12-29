@@ -47,7 +47,7 @@ class Users {
                 },
             },
             {
-                name: "This User Not Found!",
+                name: "Password or Username is incorrect!",
                 username: "system",
                 desc: "system",
                 password: "system",
@@ -74,7 +74,6 @@ class Users {
 
         // Regular expression to detect HTML tags
         const hasHTMLTags = /<\/?[a-z][\s\S]*>/i.test(username);
-        console.log(username);
 
         // Check for invalid username
         if (
