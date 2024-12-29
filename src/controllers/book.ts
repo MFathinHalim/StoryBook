@@ -137,4 +137,19 @@ export default class Books {
       return [];
     }
   }
+  async GetBooksBySearch(page: number = 1, limit: number = 5, tag: string, term: string): Promise<bookType[]> {
+    const skip = (page - 1) * limit;
+    try {
+      const books = await this.#books
+      .find({ tag: tag, title: { $regex: term, $options: "i" } })
+      .sort({ _id: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec();
+      return books || [];
+    } catch (error) {
+      console.error("Error fetching question books:", error);
+      return [];
+    }
+  }
 }

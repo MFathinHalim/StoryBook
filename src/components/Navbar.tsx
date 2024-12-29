@@ -5,10 +5,14 @@ import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar(): JSX.Element {
   const [isLanding, setLanding] = useState(false);
+  const [tag, setTag] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
   useEffect(() => {
     //@ts-ignore
-    import('bootstrap/dist/js/bootstrap.bundle');
-  }, []); // Hanya dipanggil sekali setelah render pertama
+    import("bootstrap/dist/js/bootstrap.bundle");
+  }, []);
+
   useEffect(() => {
     if (
       window.location.pathname === "/" ||
@@ -19,7 +23,15 @@ export default function Navbar(): JSX.Element {
     } else {
       setLanding(true);
     }
-  }, []); // Tambahkan dependency array untuk menghindari pemanggilan useEffect berulang-ulang
+
+    if (window.location.pathname === "/home") {
+      setTag("");
+    } else if (window.location.pathname === "/book/questions") {
+      setTag("Questions");
+    } else if (window.location.pathname === "/book/publish") {
+      setTag("Publish");
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -41,13 +53,32 @@ export default function Navbar(): JSX.Element {
     }
   };
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent form submission
+    if (inputValue.trim()) {
+      window.location.href = `/search/${encodeURIComponent(inputValue)}?tag=${encodeURIComponent(tag)}`;
+    }
+  };
+
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-dark px-3 sticky-top background-dark"
-    >
-      <a className="navbar-brand" href="/home" style={{ color: "#fff", fontWeight: "bold", fontSize: "1.5rem" }}>
-      <img src="https://ik.imagekit.io/9hpbqscxd/SG/image-86.jpg?updatedAt=1705798245623" width="35" height="35" className="d-inline-block align-top rounded-circle me-2" alt=""/>
-      Story Book
+    <nav className="navbar navbar-expand-lg navbar-dark px-3 sticky-top background-dark">
+      <a
+        className="navbar-brand"
+        href="/home"
+        style={{ color: "#fff", fontWeight: "bold", fontSize: "1.5rem" }}
+      >
+        <img
+          src="https://ik.imagekit.io/9hpbqscxd/SG/image-86.jpg?updatedAt=1705798245623"
+          width="35"
+          height="35"
+          className="d-inline-block align-top rounded-circle me-2"
+          alt=""
+        />
+        Story Book
       </a>
       <button
         className="navbar-toggler"
@@ -62,20 +93,47 @@ export default function Navbar(): JSX.Element {
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
+        {isLanding && (
+          <form className="form-inline padding-0 w-100" onSubmit={handleSearch}>
+            <div className="input-group w-100">
+              <input
+                className="form-control bg-transparent rounded-pill"
+                type="search"
+                value={inputValue}
+                onChange={handleInputChange}
+                id="searchInput"
+                placeholder="Search"
+                autoComplete="off"
+                aria-label="Search"
+              />
+            </div>
+          </form>
+        )}
         <ul className="navbar-nav ms-auto">
           <li className="nav-item">
-            <a className="nav-link text-light" style={{ fontWeight: "bold !important" }} href="/ai">
+            <a
+              className="nav-link text-light"
+              style={{ fontWeight: "bold" }}
+              href="/ai"
+            >
               AI
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link text-light" style={{ fontWeight: "bold !important" }} href="/book/questions">
+            <a
+              className="nav-link text-light"
+              style={{ fontWeight: "bold" }}
+              href="/book/questions"
+            >
               Questions
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link text-light" style={{ fontWeight: "bold !important" }}
-              href="/book/publish">
+            <a
+              className="nav-link text-light"
+              style={{ fontWeight: "bold" }}
+              href="/book/publish"
+            >
               Novel
             </a>
           </li>
@@ -84,14 +142,13 @@ export default function Navbar(): JSX.Element {
               <button
                 onClick={handleLogout}
                 className="btn btn-outline-danger btn-sm"
-                title="Logout"
                 style={{
                   borderRadius: "20px",
                   padding: "5px 15px",
                   transition: "background-color 0.3s ease",
                 }}
               >
-                <FontAwesomeIcon icon={faSignOutAlt} /> Log Out
+                <FontAwesomeIcon icon={faSignOutAlt} />
               </button>
             </li>
           )}

@@ -81,6 +81,9 @@ body {
     width: auto;
     max-height: 200px;
 }
+.padding-0 {
+    padding: none !important;
+}
 .pfp-home-blur {
     border-radius: 35%;
     height: 100%;
@@ -112,7 +115,6 @@ h3, .form-control {
     margin-right: 6px;
     border: 2px solid var(--primary) !important;
     width: 100% !important;
-    margin-top: 10px;
     background-color: var(--background) !important;
     color: var(--text) !important
 }
