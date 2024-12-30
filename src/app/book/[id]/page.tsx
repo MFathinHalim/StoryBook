@@ -37,6 +37,7 @@ export default function GetBook() {
             }
 
             const data = await response.json();
+            if(!data.token) return window.location.href = "/login" 
 
             sessionStorage.setItem("token", data.token);
             return data.token;
