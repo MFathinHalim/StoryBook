@@ -31,9 +31,7 @@ export default function GetBook() {
             });
 
             if (!response.ok) {
-                console.error("Failed to refresh token");
-
-                return undefined;
+                window.location.href = "/login" 
             }
 
             const data = await response.json();
