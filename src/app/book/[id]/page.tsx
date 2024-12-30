@@ -228,7 +228,7 @@ export default function GetBook() {
                                             className='comment-avatar rounded-circle me-2'
                                         />
                                         <div className='comment-user-info mb-0'>
-                                            <h5 className='comment-name mb-0'>{comment.user.name}</h5>
+                                            <h5 className='comment-name mb-0'>{comment.user.name || comment.user.username}</h5>
                                             <p className='my-0' style={{ wordWrap: 'break-word', maxWidth: '55vw' }}>{comment.comment}</p>
                                         </div>
                                     </div>
