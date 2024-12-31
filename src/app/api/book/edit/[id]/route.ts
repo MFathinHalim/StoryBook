@@ -45,6 +45,10 @@ export async function PATCH(req: NextRequest) {
     let bookAction = bookInstance.UserAction()
     let result;
     if (!user._id.equals(book.user._id)) {
+      book.id = '';
+      book.user = user;
+      book.time = "";
+      book._id = ""
       result = await bookAction.newPost(book, user, book?.cover || "");
     } else {
       result = await bookAction.editBook(book, book?.cover || "");
