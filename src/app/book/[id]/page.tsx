@@ -180,7 +180,7 @@ export default function GetBook() {
                 <div className='space-y-4'>
                     <h5 className="bookTitle" style={{ opacity: "78%" }}>{formatTanggal(book.time)}</h5>
                     <h1 className="bookTitle">{book.title}</h1>
-                    <h5 className="bookTitle" style={{ opacity: "78%" }}>Write by {book.user.name || book.user.username }</h5>
+                    <a href={`/profile/${book.user.username}`} ><h5 className="bookTitle" style={{ opacity: "78%" }}>Write by {book.user.name ? book.user.name : book.user.username }</h5></a>
                     {book.cover && (
                         <div>
                             <img src={book.cover} alt='Book cover' className='mt-2 rounded shadow bookCover' />
@@ -228,7 +228,7 @@ export default function GetBook() {
                                             className='comment-avatar rounded-circle me-2'
                                         />
                                         <div className='comment-user-info mb-0'>
-                                            <h5 className='comment-name mb-0'>{comment.user.name || comment.user.username}</h5>
+                                        <a href={`/profile/${comment.user.username}`} ><h5 className='comment-name mb-0'>{comment.user.name || comment.user.username}</h5></a>
                                             <p className='my-0' style={{ wordWrap: 'break-word', maxWidth: '55vw' }}>{comment.comment}</p>
                                         </div>
                                     </div>

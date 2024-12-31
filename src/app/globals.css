@@ -115,7 +115,6 @@ h3, .form-control {
     margin-right: 6px;
     border: 2px solid var(--primary) !important;
     width: 100% !important;
-    color: var(--text) !important
 }
 
 textarea.form-control {

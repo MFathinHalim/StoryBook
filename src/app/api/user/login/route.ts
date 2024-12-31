@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
     if (result.name === "Password or Username is incorrect!") {
       return NextResponse.json({ message: "The Password or Username is Incorrect" }, { status: 401 });
     }
-    console.log(result)
     const tokenFunction = await userInstance.createAccessToken(result._id.toString());
     const token = tokenFunction.newToken;
 
