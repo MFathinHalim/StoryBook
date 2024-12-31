@@ -103,6 +103,23 @@ export default class Books {
       return [];
     }
   }
+  async GetBooksFromUserWithoutPrivate(userId: string, page: number = 1, limit: number = 5): Promise<bookType[]> {
+    const skip = (page - 1) * limit;
+    try {
+      const books = await bookModel.find({
+        user: new mongoose.Types.ObjectId(userId),
+        tag: { $in: ["Publish", "Question"] }
+      })
+        .skip(skip)
+        .sort({ _id: -1 })
+        .limit(limit)
+        .exec();
+      return books;
+    } catch (error) {
+      console.error("Error fetching books from user:", error);
+      return [];
+    }
+  }
 
   // Get Books from Publisher (filtered by "Publish" tag) with pagination
   async GetBooksFromPublisher(page: number = 1, limit: number = 5): Promise<bookType[]> {
