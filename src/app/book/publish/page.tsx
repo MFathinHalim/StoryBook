@@ -121,32 +121,6 @@ export default function Questions() {
     return (
         <div>
             <div className="container py-3">
-                <div className="text-center">
-                    <div style={{ position: "relative" }}>
-                        <img
-                            className="pfp-home"
-                            src={user?.pp || ""}
-                            alt={`profile picture from ${user.username}`}
-                            style={{
-                                position: "absolute",
-                                zIndex: 1,
-                            }}
-                        />
-                        <img className="pfp-home-blur" src={user?.pp || ""} alt={`profile picture from ${user.username}`} />
-                    </div>
-                    <h1 className="mt-3 mb-0">{user?.name || user?.username}</h1>
-                    <div className='secondary-text' dangerouslySetInnerHTML={{ __html: user?.desc || "No Description" }} />
-                    <div className="d-flex gap-2 justify-content-center">
-                        <a href="/book/add" className="btn primary-btn">
-                            Have Inspiration?
-                        </a>
-                        <a href="/edit" className="btn secondary-btn">
-                            Edit Profile
-                        </a>
-                    </div>
-                </div>
-                <div className="mt-5 w-100">
-                    <h3 className="button-container text-left">Recent Publish</h3> {/* Teks rata kiri, lebar 100% */}
                     {questions.length > 0 ? (
                         <div className="row">
                             {questions.map((question) => (
@@ -159,9 +133,8 @@ export default function Questions() {
                     ) : (
                         <p>No publish to display.</p>
                     )}
-                </div>
-                <div ref={ref} />
             </div>
+            <div ref={ref} />
         </div>
     );
 }

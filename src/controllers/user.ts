@@ -222,7 +222,6 @@ class Users {
         try {
             // Cari user berdasarkan username
             const user = await this.#users.findOne({ username: username });
-
             // Jika user tidak ditemukan, kembalikan error
             if (!user) {
                 return this.#error[1];
@@ -230,6 +229,7 @@ class Users {
 
             // Menghilangkan password dari data pengguna yang dikembalikan
             const userWithoutPassword = {
+                _id: user._id,
                 id: user.id,
                 name: user.name,
                 username: user.username,
