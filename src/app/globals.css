@@ -65,13 +65,6 @@ body {
     color: var(--text) !important;
     font-family: "Montserrat", sans-serif !important;
 }
-.background-dark {
-    /* From https://css.glass */
-    background: rgba(6, 11, 14, 0.46) !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-    backdrop-filter: blur(7.1px) !important;
-    -webkit-backdrop-filter: blur(7.1px) !important;
-}
 .karla {
     font-family: 'Karla' !important;
 }
@@ -114,6 +107,8 @@ h3, .form-control {
     border: none !important;
     margin-right: 6px;
     border: 2px solid var(--primary) !important;
+    background-color: var(--background) !important;
+    color: var(--text) !important;
     width: 100% !important;
 }
 
@@ -233,6 +228,13 @@ hr {
 }
 ::placeholder {
     color: #c0c9de !important;
+}
+.background-dark {
+    /* From https://css.glass */
+    background: rgba(6, 11, 14, 0.46) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(7.1px) !important;
+    -webkit-backdrop-filter: blur(7.1px) !important;
 }
 @media (max-width: 768px) {
     /* Adjust 768px as needed */
