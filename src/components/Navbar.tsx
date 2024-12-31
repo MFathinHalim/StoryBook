@@ -97,7 +97,7 @@ export default function Navbar(): JSX.Element {
           <form className="form-inline padding-0 w-100" onSubmit={handleSearch}>
             <div className="input-group w-100">
               <input
-                className="form-control bg-transparent rounded-pill"
+                className="form-control background-dark rounded-pill"
                 type="search"
                 value={inputValue}
                 onChange={handleInputChange}
