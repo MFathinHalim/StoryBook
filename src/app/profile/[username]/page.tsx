@@ -146,14 +146,6 @@ export default function Homepage() {
                     </div>
                     <h1 className='mt-3 mb-0'>{seeUser?.name || seeUser?.username}</h1>
                     <div className='secondary-text karla' dangerouslySetInnerHTML={{ __html: seeUser?.desc || "No Description" }} />
-                    <div className='d-flex gap-2 justify-content-center'>
-                        <a href='/book/add' className='btn primary-btn'>
-                            Have some idea ?
-                        </a>
-                        <a href='/edit' className='btn secondary-btn'>
-                            Edit Profile
-                        </a>
-                    </div>
                 </div>
                 <div className='mt-5 w-100'>
                     <h3 className='button-container text-left'>Recent Stories</h3> {/* Teks rata kiri, lebar 100% */}
