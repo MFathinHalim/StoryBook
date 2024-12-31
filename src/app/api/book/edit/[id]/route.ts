@@ -41,10 +41,15 @@ export async function PATCH(req: NextRequest) {
         const currentEpochTime = Date.now();
         book.cover = `${uploadResult.url}?updatedAt=${currentEpochTime}`;
       }
-
-    if (!user._id.equals(book.user._id)) return NextResponse.json({ msg: "Invalid Authentication" }, { status: 401 });
-    const result = await bookInstance.UserAction().editBook(book, book?.cover || "");
-
+    
+    let bookAction = bookInstance.UserAction()
+    let result;
+    if (!user._id.equals(book.user._id)) {
+      result = await bookAction.newPost(book, user, book?.cover || "");
+    } else {
+      result = await bookAction.editBook(book, book?.cover || "");
+    }
+    
     if (result === 204) return NextResponse.json({ msg: "Empty Title" }, { status: 204 });
 
     return NextResponse.json({ id: result });
