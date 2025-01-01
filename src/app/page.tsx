@@ -20,7 +20,7 @@ export default function Homepage() {
 
             if (!response.ok) {
                 return 
-            }
+           }
 
             const data = await response.json();
             if (!data.token) return
