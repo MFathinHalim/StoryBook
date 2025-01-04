@@ -73,7 +73,7 @@ export default function Questions() {
 
     async function fetchQuestions(userId: string, token: string, page: number) {
         try {
-            const fetchQuestion = await fetch(`/api/book/get/publish?page=${page}&limit=3`, {
+            const fetchQuestion = await fetch(`/api/book/get/publish?page=${page}&limit=9`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

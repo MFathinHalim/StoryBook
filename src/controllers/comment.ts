@@ -50,7 +50,7 @@ export default class Comment {
       }
     }
     async getComments(bookId: string, page: number = 1) {
-        const limit = 5;
+        const limit = 1;
         const skip = page > 0 ? (page - 1) * limit : 0;
         let comments = await this.#comments
             .find({ commentTo: bookId })

@@ -73,7 +73,7 @@ export default function Homepage() {
 
     async function fetchBooks(userId: string, token: string, page: number) {
         try {
-            const fetchBook = await fetch(`/api/book/get/userId/${userId}?page=${page}&limit=2`, {
+            const fetchBook = await fetch(`/api/book/get/userId/${userId}?page=${page}&limit=9`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -156,7 +156,7 @@ export default function Homepage() {
                     {books.length > 0 ? (
                         <div className="row">
                             {books.map((book, index) => (
-                                <div key={book._id} className="col-md-6 col-sm-6">
+                                <div key={book._id} className="col-md-4 col-sm-6">
                                 <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
                             </div>
                             ))}

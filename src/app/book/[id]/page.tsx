@@ -89,14 +89,13 @@ export default function GetBook() {
             ...commentsData.comments,
           ]);
         }
-        if(commentData.comments.length === 0) {
+        if(commentsData.comments.length === 0) {
             setHasMore(false); // No more books to load
         }
       }
     } catch (err) {
       return;
     } finally {
-      console.log(page)
       setCurrentPage(page);
       setLoading(false);
     }

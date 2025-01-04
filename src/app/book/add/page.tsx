@@ -143,7 +143,7 @@ export default function AddBooks() {
                             />
                         </div>
 
-                        <div className='d-flex justify-content-between align-items-center mt-3 '>
+                        <div className='d-flex justify-content-between align-items-center mt-3 mb-2'>
                             <div className='d-flex gap-2 align-items-center'>
                                 <button
                                     type='button'
@@ -163,6 +163,8 @@ export default function AddBooks() {
                                 {loading ? "Submitting..." : "Add Book"}
                             </button>
                         </div>
+                        <small className="text-left mt-3">*No need to select if you want it private.</small>
+
 
                         {successMessage && <p className='text-green-500 font-semibold mt-2'>{successMessage}</p>}
                     </form>
