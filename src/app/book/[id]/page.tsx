@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { useInView } from "react-intersection-observer";
 
 export default function GetBook() {
   const params = useParams();
@@ -19,6 +20,8 @@ export default function GetBook() {
   const [currentPage, setCurrentPage] = useState(0);
   const [aiSummary, setAiSummary] = useState<string | null>(null); // State for AI summary
   const [loadingSummary, setLoadingSummary] = useState(false); // Loading state for AI Summary
+  const { ref, inView } = useInView();
+  const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada buku untuk dimuat
 
   const refreshAccessToken = async () => {
     try {
@@ -86,11 +89,14 @@ export default function GetBook() {
             ...commentsData.comments,
           ]);
         }
+        if(commentData.comments.length === 0) {
+            setHasMore(false); // No more books to load
+        }
       }
     } catch (err) {
       return;
     } finally {
-      page = +page + 1;
+      console.log(page)
       setCurrentPage(page);
       setLoading(false);
     }
@@ -98,9 +104,23 @@ export default function GetBook() {
   useEffect(() => {
     if (!id) return;
 
-    setCurrentPage(currentPage + 1);
     fetchBookAndComments(currentPage + 1);
   }, [id]);
+    useEffect(() => {
+    if (inView) {
+        const loadMoreComments = async () => {
+            if (hasMore && !loading) {
+                try {
+                    await fetchBookAndComments(currentPage + 1); // Increment page here
+                } catch (error) {
+                    console.error("Error loading more books:", error);
+                }
+            }
+        };
+
+        loadMoreComments();
+    }
+}, [inView, hasMore, loading]);
   const handleUpvote = async (commentId: string) => {
     try {
       const token = await refreshAccessToken();
@@ -341,14 +361,7 @@ export default function GetBook() {
           ) : (
             <p className="text-center">No comments yet.</p>
           )}
-          <button
-            onClick={() => {
-              fetchBookAndComments(currentPage + 1);
-            }}
-            className="btn primary-btn mt-2 cursor-default rounded-pill mb-3"
-          >
-            Tampilkan Lebih Banyak
-          </button>
+          <div ref={ref} />
         </div>
       </div>
     </div>
