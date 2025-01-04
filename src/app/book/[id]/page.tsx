@@ -207,7 +207,7 @@ export default function GetBook() {
       const data = await response.json();
       setAiSummary(data.result); // Save AI summary to state
     } catch (err) {
-      alert((err as Error).message);
+      alert("Sorry, but this book is to long for current ai :(");
     } finally {
       setLoadingSummary(false);
     }

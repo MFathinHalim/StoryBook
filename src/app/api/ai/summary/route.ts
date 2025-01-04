@@ -13,5 +13,6 @@ export async function POST(req: NextRequest) {
     //@ts-ignore
     const prompt = formData.get("notes")!.toString();
     const result = await ai.generateSummary(prompt)
+    console.log(result)
     return NextResponse.json({ result })
 }
