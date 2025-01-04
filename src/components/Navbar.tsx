@@ -134,7 +134,7 @@ export default function Navbar(): JSX.Element {
               style={{ fontWeight: "bold" }}
               href="/book/publish"
             >
-              Novel
+              Publish
             </a>
           </li>
           {isLanding && (
