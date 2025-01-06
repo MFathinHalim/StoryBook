@@ -273,7 +273,7 @@ export default function GetBook() {
               href={`/book/edit/${book.id}`}
               className="btn accent-btn rounded-pill"
             >
-              Edit
+              Copy / Edit
             </a>
             <button className="btn primary-btn rounded-pill">Share</button>
           </div>

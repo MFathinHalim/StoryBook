@@ -48,8 +48,6 @@ export default function AddBooks() {
     };
 
     const handleToggle = (selectedTag: string) => {
-        console.log(tag);
-        console.log(selectedTag);
         setTag((prevTag) => (prevTag === selectedTag ? "" : selectedTag)); // Toggle logic
     };
 
