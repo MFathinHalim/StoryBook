@@ -73,7 +73,8 @@ export default function EditBook() {
                 setTitle(data.title);
                 setNotes(data.notes);
                 setImagee(data.cover);
-                setTag(data.tag);
+                //@ts-ignore
+                setTag(data?.tag);
             } catch (err: any) {
                 setError(err.message);
             } finally {
