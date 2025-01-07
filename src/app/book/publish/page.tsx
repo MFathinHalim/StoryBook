@@ -52,8 +52,7 @@ export default function Questions() {
                 });
 
                 if (!response.ok) {
-                    console.error("Failed to fetch user data");
-                    throw new Error("Unauthorized");
+                    window.location.href = "/";
                 }
 
                 const check = await response.json();

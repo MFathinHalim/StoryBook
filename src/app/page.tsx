@@ -47,8 +47,7 @@ export default function Homepage() {
                 });
 
                 if (!response.ok) {
-                    console.error("Failed to fetch user data");
-                    throw new Error("Unauthorized");
+                    return
                 }
 
                 const check = await response.json();
