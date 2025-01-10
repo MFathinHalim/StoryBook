@@ -276,7 +276,7 @@ export default function GetBook() {
             <button className="btn primary-btn rounded-pill">Share</button>
           </div>
           {aiSummary && (
-            <div className="summary-box mt-3 p-3 border-1 bg-dark rounded-3">
+            <div className="summary-box mt-3 p-3 border-1 rounded-3">
               <h5 className="text-bold bold strong">AI Summary:</h5>
               <p>{aiSummary}</p>
             </div>
