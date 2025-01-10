@@ -87,7 +87,7 @@ export default function Navbar(): JSX.Element {
           alt=""
         />
         Story Book
-      </a>git pus
+      </a>
       <button
         className="navbar-toggler"
         type="button"
