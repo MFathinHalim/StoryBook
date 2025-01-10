@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
     const page = parseInt(req.nextUrl.searchParams.get("page") || "1", 10); 
     const limit = parseInt(req.nextUrl.searchParams.get("limit") || "5", 10);
     const books = await bookInstance.GetBooksBySearch(page, limit, tag, searchTerm);
-
     if (!books) return NextResponse.json({ msg: "Book not found!" }, { status: 404 })
 
     return NextResponse.json({books})

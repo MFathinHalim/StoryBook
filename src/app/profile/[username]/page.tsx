@@ -130,7 +130,7 @@ export default function Homepage() {
 
     return (
         <div>
-            <div className='container py-3'>
+            <div className='px-3 py-3'>
                 <div className='text-center'>
                     <div style={{ position: "relative" }}>
                         <img
@@ -146,13 +146,18 @@ export default function Homepage() {
                     </div>
                     <h1 className='mt-3 mb-0'>{seeUser?.name || seeUser?.username}</h1>
                     <div className='secondary-text karla' dangerouslySetInnerHTML={{ __html: seeUser?.desc || "No Description" }} />
+                      {seeUser?._id === user?._id && (
+                        <div className='mb-0'>
+                          <a href="/edit" className="btn primary-btn">Edit Profile</a>
+                        </div>
+                      )}
                 </div>
-                <div className='mt-5 w-100'>
+                <div className='mt-3 w-100'>
                     <h3 className='button-container text-left'>Recent Stories</h3> {/* Teks rata kiri, lebar 100% */}
                     {books.length > 0 ? (
                         <div className="row">
                             {books.map((book, index) => (
-                                <div key={book._id} className="col-md-6 col-sm-6">
+                                <div key={book._id} className="col-md-3 col-sm-6">
                                 <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
                             </div>
                             ))}

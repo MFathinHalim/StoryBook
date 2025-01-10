@@ -125,28 +125,31 @@ export default function Homepage() {
 
     return (
         <div>
-            <div className='container py-3'>
+            <div className='px-4 py-3'>
                 <div className='text-center'>
                     <div style={{ position: "relative" }}>
-                        <img
-                            className='pfp-home'
-                            src={user?.pp || ""}
-                            alt={`profile picture from ${user.username}`}
-                            style={{
-                                position: "absolute",
-                                zIndex: 1,
-                            }}
-                        />
-                        <img className='pfp-home-blur' src={user?.pp || ""} alt={`profile picture from ${user.username}`} />
+                        <a href={`/profile/${user.username  }`}>
+                            <img
+                                className='pfp-home'
+                                src={user?.pp || ""}
+                                alt={`profile picture from ${user.username}`}
+                                style={{
+                                    position: "absolute",
+                                    zIndex: 1,
+                                }}
+                            />
+                            <img className='pfp-home-blur' src={user?.pp || ""} alt={`profile picture from ${user.username}`} />
+                        </a>
                     </div>
-                    <h1 className='mt-3 mb-0'>{user?.name || user?.username}</h1>
-                    <div className='secondary-text karla' dangerouslySetInnerHTML={{ __html: user?.desc || "No Description" }} />
+
+                    <h1 className='mt-3 mb-2'>Hello, {user?.name || user?.username}</h1>
+                    <div className='secondary-text karla pb-1' dangerouslySetInnerHTML={{ __html: user?.desc || "No Description" }} />
                     <div className='d-flex gap-2 justify-content-center'>
                         <a href='/book/add' className='btn primary-btn'>
                             Have some idea ?
                         </a>
-                        <a href='/edit' className='btn secondary-btn'>
-                            Edit Profile
+                        <a href='/ai' className='btn secondary-btn'>
+                            Try Write with AI
                         </a>
                     </div>
                 </div>
@@ -155,7 +158,7 @@ export default function Homepage() {
                     {books.length > 0 ? (
                         <div className="row">
                             {books.map((book, index) => (
-                                <div key={book._id} className="col-md-4 col-sm-6">
+                                <div key={book._id} className="col-md-3 col-sm-6">
                                 <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
                             </div>
                             ))}

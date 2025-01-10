@@ -65,11 +65,12 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                 <a href={`/book/${book._id}`} className='text-center'>
                     <img className={window.location.pathname === '/home' ? 'img-bs' : 'img-bs'} src={book.cover || "https://4kwallpapers.com/images/walls/thumbs_3t/18164.jpg"} alt={book.title} />
                 </a>
-                <div className='mt-2 d-flex justify-content-between w-100 bookSc'>
+                <div className='mt-2 mb-0 pb-0 d-flex justify-content-between w-100 bookSc'>
                     <a href={`/book/${book._id}`} className={'book-title'}>
-<h3 className='mt-1 '>
-  {book.title}
-</h3>                    </a>
+                        <h4 className='mt-1 py-0 my-0'>
+                          {book.title}
+                        </h4>          
+                    </a>
                     <div className='d-flex'>
                         {/* Share Button */}
                         <button className='btn btn-transparent text-white btn-lg p-0 px-2 me-1' onClick={handleShare}>
@@ -85,6 +86,10 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                             </button>
                         )}
                     </div>
+
+                </div>
+                <div className='d-flex justify-content-between w-100 bookSc'>
+                    <p className='karla book-title-2 secondary-text my-0 '>{book.notes && book.notes.replace(/<\/?[^>]+(>|$)/g, "")}</p>
                 </div>
             </div>
         </>

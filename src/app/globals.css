@@ -119,6 +119,14 @@ width: calc(80%); /* The trick is here! */
     white-space: nowrap !important;
     overflow: hidden !important;
 }
+.book-title-2 { 
+        display: inline-block !important;
+        float:left !important;
+width: calc(100%); /* The trick is here! */
+height: 50px !important;
+    overflow: hidden !important;
+}
+
 
 textarea.form-control {
     font-size: larger !important;

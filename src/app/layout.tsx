@@ -31,8 +31,6 @@ export default function RootLayout({
                     {/* Bagian Konten */}
                     <main className="flex-grow-1">{children}</main>
                 </div>
-                {/* Footer */}
-                <Footer />
             </body>
         </html>
     );

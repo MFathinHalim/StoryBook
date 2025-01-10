@@ -158,12 +158,17 @@ export default class Books {
     const skip = (page - 1) * limit;
     try {
       const books = await this.#books
-      .find({ tag: tag, title: { $regex: term, $options: "i" } })
+      .find({
+  $and: [
+    { title: { $regex: term, $options: "i" } },
+    { tag: tag }
+  ]
+})
       .sort({ _id: -1 })
         .skip(skip)
         .limit(limit)
         .exec();
-      return books || [];
+      return books;
     } catch (error) {
       console.error("Error fetching question books:", error);
       return [];

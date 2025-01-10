@@ -23,13 +23,16 @@ export default function Navbar(): JSX.Element {
     } else {
       setLanding(true);
     }
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const tagParam = urlParams.get('tag') ? `?tag=${urlParams.get('tag')}` : '';
     if (window.location.pathname === "/home") {
       setTag("");
     } else if (window.location.pathname === "/book/questions") {
-      setTag("Questions");
+      setTag("Question");
     } else if (window.location.pathname === "/book/publish") {
       setTag("Publish");
+    } else if(tagParam) {
+      setTag(tagParam.replace("?tag=", ""))
     }
   }, []);
 
@@ -60,13 +63,13 @@ export default function Navbar(): JSX.Element {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent form submission
     if (inputValue.trim()) {
-      window.location.href = `/search/${encodeURIComponent(inputValue)}?tag=${encodeURIComponent(tag)}`;
+      window.location.href = `/search/${encodeURIComponent(inputValue)}?tag=${tag}`;
     }
   };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark px-3 sticky-top background-dark">
-      <a
+       <a
         className="navbar-brand"
         href="/home"
         style={{ color: "#fff", fontWeight: "bold", fontSize: "1.5rem" }}
@@ -97,12 +100,12 @@ export default function Navbar(): JSX.Element {
           <form className="form-inline padding-0 w-100" onSubmit={handleSearch}>
             <div className="input-group w-100">
               <input
-                className="form-control background-dark rounded-pill"
+                className="form-control background-dark border-1"
                 type="search"
                 value={inputValue}
                 onChange={handleInputChange}
                 id="searchInput"
-                placeholder="Search"
+                placeholder="Search Book"
                 autoComplete="off"
                 aria-label="Search"
               />
@@ -110,48 +113,32 @@ export default function Navbar(): JSX.Element {
           </form>
         )}
         <ul className="navbar-nav ms-auto">
+        <hr />
           <li className="nav-item">
-            <a
-              className="nav-link text-light"
-              style={{ fontWeight: "bold" }}
-              href="/ai"
-            >
-              AI
+           <a
+              className="nav-link rounded-pill"
+              href="/book/add"
+              >
+              {window.location.pathname === '/book/add' ? <strong>Write</strong> : 'Write'}
             </a>
           </li>
           <li className="nav-item">
             <a
-              className="nav-link text-light"
-              style={{ fontWeight: "bold" }}
+              className={`nav-link text-light`}
               href="/book/questions"
             >
-              Questions
+              {tag === 'Question' ? <strong> Question </strong> : 'Question'}
             </a>
           </li>
           <li className="nav-item">
             <a
               className="nav-link text-light"
-              style={{ fontWeight: "bold" }}
               href="/book/publish"
             >
-              Publish
+              {tag === 'Publish' ? <strong> Publish </strong> : 'Publish'}
             </a>
           </li>
-          {isLanding && (
-            <li className="nav-item ms-lg-3">
-              <button
-                onClick={handleLogout}
-                className="btn btn-outline-danger btn-sm"
-                style={{
-                  borderRadius: "20px",
-                  padding: "5px 15px",
-                  transition: "background-color 0.3s ease",
-                }}
-              >
-                <FontAwesomeIcon icon={faSignOutAlt} />
-              </button>
-            </li>
-          )}
+         
         </ul>
       </div>
     </nav>

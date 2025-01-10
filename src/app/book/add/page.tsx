@@ -99,12 +99,19 @@ export default function AddBooks() {
         <div className='container'>
             <div className='content'>
                 <div className='space-y-4'>
+                    <div className="d-flex justify-content-between align-items-center">
                     <h1 className='bookTitle'>Add a New Book</h1>
+                    <a href="/ai" className='btn btn-outline-dark rounded my-2'>
+                      
+                        Wanna try using AI?
+                    </a>
+                    </div>
                     {imagee && (
                         <div>
                             <img src={imagee} alt='Book cover' className='mt-2 rounded shadow bookCover' />
                         </div>
                     )}
+
                     <form onSubmit={handleSubmit} className='space-y-4'>
                         <div className='mt-2'>
                             <label htmlFor='title' className='block font-semibold mb-1 h5'>
