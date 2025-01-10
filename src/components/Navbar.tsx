@@ -7,6 +7,11 @@ export default function Navbar(): JSX.Element {
   const [isLanding, setLanding] = useState(false);
   const [tag, setTag] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [path, setPath] = useState('');
+
+  useEffect(() => {
+    setPath(window.location.pathname);
+  }, []);
 
   useEffect(() => {
     //@ts-ignore
@@ -82,7 +87,7 @@ export default function Navbar(): JSX.Element {
           alt=""
         />
         Story Book
-      </a>
+      </a>git pus
       <button
         className="navbar-toggler"
         type="button"
@@ -119,7 +124,7 @@ export default function Navbar(): JSX.Element {
               className="nav-link rounded-pill"
               href="/book/add"
               >
-              {window.location.pathname === '/book/add' ? <strong>Write</strong> : 'Write'}
+              {path === '/book/add' ? <strong>Write</strong> : 'Write'}
             </a>
           </li>
           <li className="nav-item">
