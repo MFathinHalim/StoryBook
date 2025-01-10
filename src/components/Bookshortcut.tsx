@@ -65,7 +65,7 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                 <a href={`/book/${book._id}`} className='text-center'>
                     <img className={window.location.pathname === '/home' ? 'img-bs' : 'img-bs'} src={book.cover || "https://4kwallpapers.com/images/walls/thumbs_3t/18164.jpg"} alt={book.title} />
                 </a>
-                <div className='mt-2 mb-0 pb-0 d-flex justify-content-between w-100 bookSc'>
+                <div className='mt-2 mb-0 pb-0 d-flex justify-content-between px-1 w-100 bookSc'>
                     <a href={`/book/${book._id}`} className={'book-title'}>
                         <h4 className='mt-1 py-0 my-0'>
                           {book.title}
@@ -73,13 +73,13 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                     </a>
                     <div className='d-flex'>
                         {/* Share Button */}
-                        <button className='btn btn-transparent text-white btn-lg p-0 px-2 me-1' onClick={handleShare}>
+                        <button className='btn btn-transparent btn-lg p-0 px-2 me-1' onClick={handleShare}>
                             <FontAwesomeIcon icon={faShare} />
                         </button>
                         {/* Delete Button */}
                         {window.location.pathname === '/home' && (
                             <button
-                                className="btn btn-transparent danger-text btn-lg p-0"
+                                className="btn btn-transparent btn-lg p-0"
                                 onClick={handleDelete}
                             >
                                 <FontAwesomeIcon icon={faTrash} />
@@ -88,7 +88,7 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
                     </div>
 
                 </div>
-                <div className='d-flex justify-content-between w-100 bookSc'>
+                <div className='d-flex px-1 justify-content-between w-100 bookSc'>
                     <p className='karla book-title-2 secondary-text my-0 '>{book.notes && book.notes.replace(/<\/?[^>]+(>|$)/g, "")}</p>
                 </div>
             </div>

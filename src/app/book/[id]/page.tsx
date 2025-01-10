@@ -233,14 +233,13 @@ export default function GetBook() {
       "November",
       "Desember",
     ];
-
     const bulanIndex = parseInt(bulan) - 1; // Mendapatkan index bulan (dimulai dari 0)
     const namaBulanFormatted = namaBulan[bulanIndex];
     return `${tanggal} ${namaBulanFormatted} ${tahun}`; // Menggabungkan kembali dengan format baru
   }
 
   return (
-    <div className="container">
+    <div className="container pt-4">
       <div className="content">
         <div className="space-y-4">
           <h5 className="bookTitle" style={{ opacity: "78%" }}>
@@ -283,16 +282,16 @@ export default function GetBook() {
             </div>
           )}
           <div
-            className="text-justify isi mt-2 karla"
+            className="isi mt-2 karla"
             dangerouslySetInnerHTML={{ __html: book.notes }}
           />
         </div>
         <h3 className="font-bold mb-2">Comments</h3>
-        <div className="comment-form rounded background-dark text-white">
+        <div className="comment-form rounded">
           <div className="d-flex">
             <div className="w-100">
               <textarea
-                className="form-control background-dark text-white border-2 border-secondary rounded p-2"
+                className="form-control border-2 border-secondary rounded p-2"
                 placeholder="Write a comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
@@ -307,20 +306,20 @@ export default function GetBook() {
           <div className="text-end mt-2">
             <button
               onClick={handlePostComment}
-              className="btn btn-sm primary-btn rounded-pill px-4 py-1"
+              className="btn btn-sm primary-btn rounded-pill px-3 py-1"
               style={{ fontWeight: "bold" }}
             >
-              Post Comment
+              Post
             </button>
           </div>
         </div>
         <div>
           {comments?.length > 0 ? (
-            <ul className="list-group background-dark border-0 comment-list">
+            <ul className="list-group border-0 comment-list py-3">
               {comments.map((comment: any) => (
                 <li
                   key={comment._id}
-                  className="my-2 list-group-item border-0 align-items-center p-0 background-dark text-white d-flex justify-content-between"
+                  className="my-2 list-group-item bg-transparent border-0 align-items-center p-0 d-flex justify-content-between"
                 >
                   <div className="d-flex p-0 ">
                     <img

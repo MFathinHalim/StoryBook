@@ -122,7 +122,25 @@ export default function Homepage() {
     }
 }, [inView, hasMore, loading, user?._id]);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/user/logout", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
+      if (response.ok) {
+        sessionStorage.clear();
+        window.location.href = "/";
+      } else {
+        console.error("Failed to logout");
+      }
+    } catch (error) {
+      console.error("An error occurred during logout:", error);
+    }
+  };
     // Fallback while loading user
     if (seeUser === null || loading) {
         return <Loading />;
@@ -130,7 +148,7 @@ export default function Homepage() {
 
     return (
         <div>
-            <div className='px-3 py-3'>
+            <div className='container py-3'>
                 <div className='text-center'>
                     <div style={{ position: "relative" }}>
                         <img
@@ -147,8 +165,11 @@ export default function Homepage() {
                     <h1 className='mt-3 mb-0'>{seeUser?.name || seeUser?.username}</h1>
                     <div className='secondary-text karla' dangerouslySetInnerHTML={{ __html: seeUser?.desc || "No Description" }} />
                       {seeUser?._id === user?._id && (
-                        <div className='mb-0'>
+                        <div className='d-flex gap-2 justify-content-center'>
                           <a href="/edit" className="btn primary-btn">Edit Profile</a>
+                          <button className="btn btn-danger text-white rounded" onClick={handleLogout} >
+                            Good Bye
+                          </button>
                         </div>
                       )}
                 </div>
@@ -157,7 +178,7 @@ export default function Homepage() {
                     {books.length > 0 ? (
                         <div className="row">
                             {books.map((book, index) => (
-                                <div key={book._id} className="col-md-3 col-sm-6">
+                                <div key={book._id} className="col-md-4 col-sm-6">
                                 <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
                             </div>
                             ))}
@@ -167,9 +188,8 @@ export default function Homepage() {
                         <p>No books to display.</p>
                     )}
                 </div>
+                <div ref={ref} />
             </div>
-                    <div ref={ref} />
-
         </div>
     );
 }

@@ -119,20 +119,20 @@ export default function Questions() {
 
     return (
         <div>
-        <div className="py-3 px-3">
-                {questions.length > 0 ? (
-                    <div className="row">
-                        {questions.map((question) => (
-                            <div key={question._id} className="col-md-3 col-sm-6">
-                                <BookShortcut key={question._id} book={question} refreshAccessToken={refreshAccessToken} />
-                            </div>
-                        ))}
-                        {loading && <Loading />}
-                    </div>
-                ) : (
-                    <p>No publish to display.</p>
-                )}
-        </div>
+         <div className="container py-3">
+                    {questions.length > 0 ? (
+                        <div className="row">
+                            {questions.map((question) => (
+                                <div key={question._id} className="col-md-4 col-sm-6">
+                                    <BookShortcut key={question._id} book={question} refreshAccessToken={refreshAccessToken} />
+                                </div>
+                            ))}
+                            {loading && <Loading />}
+                        </div>
+                    ) : (
+                        <p>No questions to display.</p>
+                    )}
+            </div>
         <div ref={ref} />
     </div>
     );

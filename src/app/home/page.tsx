@@ -125,7 +125,7 @@ export default function Homepage() {
 
     return (
         <div>
-            <div className='px-4 py-3'>
+            <div className='container mt-4 py-3'>
                 <div className='text-center'>
                     <div style={{ position: "relative" }}>
                         <a href={`/profile/${user.username  }`}>
@@ -158,7 +158,7 @@ export default function Homepage() {
                     {books.length > 0 ? (
                         <div className="row">
                             {books.map((book, index) => (
-                                <div key={book._id} className="col-md-3 col-sm-6">
+                                <div key={book._id} className="col-md-4 col-sm-6">
                                 <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
                             </div>
                             ))}

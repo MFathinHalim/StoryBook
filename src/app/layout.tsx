@@ -27,10 +27,7 @@ export default function RootLayout({
         <html lang='en'>
             <body>
                 <Navbar />
-                <div className="d-flex flex-column min-vh-100">
-                    {/* Bagian Konten */}
-                    <main className="flex-grow-1">{children}</main>
-                </div>
+                <main>{children}</main>
             </body>
         </html>
     );

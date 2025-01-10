@@ -1,17 +1,64 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faSignOutAlt, faBars } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar(): JSX.Element {
   const [isLanding, setLanding] = useState(false);
   const [tag, setTag] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [path, setPath] = useState('');
+  const [path, setPath] = useState("");
+  const [username, setUsername] = useState("");
+  const refreshAccessToken = async () => {
+    try {
+      if (sessionStorage.getItem("token")) {
+        return sessionStorage.getItem("token");
+      }
 
-  useEffect(() => {
-    setPath(window.location.pathname);
-  }, []);
+      const response = await fetch("/api/user/refreshToken", {
+        method: "POST",
+        credentials: "include", // Ensure cookies are sent
+      });
+
+      if (!response.ok) {
+        return (window.location.href = "/login");
+      }
+
+      const data = await response.json();
+      if (!data.token) window.location.href = "/login";
+      sessionStorage.setItem("token", data.token);
+      return data.token;
+    } catch (error) {
+      return null;
+    }
+  };
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      // Refresh the access token
+      const tokenTemp = await refreshAccessToken();
+
+      // Check user information
+      const response = await fetch(`/api/user/check`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${tokenTemp}` },
+      });
+
+      if (response.ok) {
+        const check = await response.json();
+        setUsername(check.username);
+      } else {
+        console.error("Failed to fetch user information");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
+
+  setPath(window.location.pathname);
+  fetchData();
+}, [username]);
+
 
   useEffect(() => {
     //@ts-ignore
@@ -29,37 +76,17 @@ export default function Navbar(): JSX.Element {
       setLanding(true);
     }
     const urlParams = new URLSearchParams(window.location.search);
-    const tagParam = urlParams.get('tag') ? `?tag=${urlParams.get('tag')}` : '';
+    const tagParam = urlParams.get("tag") ? `?tag=${urlParams.get("tag")}` : "";
     if (window.location.pathname === "/home") {
       setTag("");
     } else if (window.location.pathname === "/book/questions") {
       setTag("Question");
     } else if (window.location.pathname === "/book/publish") {
       setTag("Publish");
-    } else if(tagParam) {
-      setTag(tagParam.replace("?tag=", ""))
+    } else if (tagParam) {
+      setTag(tagParam.replace("?tag=", ""));
     }
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/user/logout", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        sessionStorage.clear();
-        window.location.href = "/";
-      } else {
-        console.error("Failed to logout");
-      }
-    } catch (error) {
-      console.error("An error occurred during logout:", error);
-    }
-  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -74,7 +101,7 @@ export default function Navbar(): JSX.Element {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark px-3 sticky-top background-dark">
-       <a
+      <a
         className="navbar-brand"
         href="/home"
         style={{ color: "#fff", fontWeight: "bold", fontSize: "1.5rem" }}
@@ -98,53 +125,70 @@ export default function Navbar(): JSX.Element {
         aria-label="Toggle navigation"
         style={{ border: "none" }}
       >
-        <span className="navbar-toggler-icon"></span>
+        <FontAwesomeIcon icon={faBars} />
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
-        {isLanding && (
-          <form className="form-inline padding-0 w-100" onSubmit={handleSearch}>
-            <div className="input-group w-100">
-              <input
-                className="form-control background-dark border-1"
-                type="search"
-                value={inputValue}
-                onChange={handleInputChange}
-                id="searchInput"
-                placeholder="Search Book"
-                autoComplete="off"
-                aria-label="Search"
-              />
-            </div>
-          </form>
-        )}
-        <ul className="navbar-nav ms-auto">
-        <hr />
-          <li className="nav-item">
-           <a
-              className="nav-link rounded-pill"
-              href="/book/add"
+        <ul className="navbar-nav me-auto">
+          {isLanding && (
+            <>
+              <li className="nav-item">
+                <a className={`nav-link`} href="/book/questions">
+                  {tag === "Question" ? (
+                    <strong> Question </strong>
+                  ) : (
+                    "Question"
+                  )}
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/book/publish">
+                  {tag === "Publish" ? <strong> Publish </strong> : "Publish"}
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/about">
+                  {path === "/about" ? <strong> About Us </strong> : "About Us"}
+                </a>
+              </li>
+              <form
+                className="form-inline mx-3 padding-0 d-flex align-items-center"
+                onSubmit={handleSearch}
               >
-              {path === '/book/add' ? <strong>Write</strong> : 'Write'}
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className={`nav-link text-light`}
-              href="/book/questions"
-            >
-              {tag === 'Question' ? <strong> Question </strong> : 'Question'}
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              className="nav-link text-light"
-              href="/book/publish"
-            >
-              {tag === 'Publish' ? <strong> Publish </strong> : 'Publish'}
-            </a>
-          </li>
-         
+                <div className="input-group">
+                  <input
+                    className="form-control search karla border-1"
+                    type="search"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    id="searchInput"
+                    placeholder="Search Book"
+                    autoComplete="off"
+                    aria-label="Search"
+                  />
+                </div>
+              </form>
+            </>
+          )}
         </ul>
+        {isLanding && (
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item">
+              <a className="nav-link rounded-pill" href="/book/add">
+                {path === "/book/add" ? <strong>Write</strong> : "Write"}
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link rounded-pill" href="/ai">
+                {path === "/ai" ? <strong>Ai Write</strong> : "Ai Write"}
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link rounded-pill" href={`/profile/${username}`}>
+                {path === `/profile/${username}` ? <strong>Profile</strong> : "Profile"}
+              </a>
+            </li>
+          </ul>
+        )}
       </div>
     </nav>
   );

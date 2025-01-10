@@ -1,12 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
-    --background: #060b0e;
-    --text: #f8fbfc;
-    --accent: #4a5364;
-    --primary: #99a8c7;
-    --secondary: #c0c9de;
-    --text-secondary: #ecf3f8;
+    --text: #071211;
+    --background: #fafdfd;
+    --primary: #48bbba;
+    --secondary: #d8969f;
+    --accent: #c9bc6d;
     --danger: rgb(255, 98, 98);
+}
+    .background-dark {
+        /* From https://css.glass */
+        background: rgba(250, 253, 253, 0.46) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        backdrop-filter: blur(7.1px) !important;
+        -webkit-backdrop-filter: blur(7.1px) !important;
+    }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #060b0e;
+        --text: #f8fbfc;
+        --accent: #4a5364;
+        --primary: #99a8c7;
+        --secondary: #c0c9de;
+        --text-secondary: #ecf3f8;
+        --danger: rgb(255, 98, 98);
+    }
+    .background-dark {
+        /* From https://css.glass */
+        background: rgba(6, 11, 14, 0.46) !important;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+        backdrop-filter: blur(7.1px) !important;
+        -webkit-backdrop-filter: blur(7.1px) !important;
+    }
+
 }
 .danger-text {
     color: var(--danger) !important;
@@ -65,6 +90,9 @@ body {
     color: var(--text) !important;
     font-family: "Montserrat", sans-serif !important;
 }
+p {
+    color: var(--text) !important;
+}
 .karla {
     font-family: 'Karla' !important;
 }
@@ -111,11 +139,14 @@ h3, .form-control {
     color: var(--text) !important;
     width: 100% !important;
 }
+.search {
+
+}
 
 .book-title { 
         display: inline-block !important;
         float:left !important;
-width: calc(80%); /* The trick is here! */
+width: calc(100%); /* The trick is here! */
     white-space: nowrap !important;
     overflow: hidden !important;
 }
@@ -134,6 +165,22 @@ textarea.form-control {
 .sa {
     font-size: xx-large !important;
 }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--primary); 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent); 
+}
 .img-bs {
     margin: 0 !important;
     padding: 0 !important;
@@ -142,8 +189,7 @@ textarea.form-control {
     max-width: 100% !important;
     object-fit: cover;
     border-radius: 17px;
-  box-shadow: 0.3rem 0.3rem var(--accent);
-    border: 1px var(--primary) solid;
+  box-shadow: 0.1rem 0.1rem var(--text);
 }
 .img-bs-home {
     margin: 0 !important;
@@ -153,8 +199,16 @@ textarea.form-control {
     max-width: 100% !important;
     object-fit: cover;
     border-radius: 17px;
-  box-shadow: 0.3rem 0.3rem var(--accent);
-    border: 1px var(--primary) solid;
+  box-shadow: 0.1rem 0.1rem var(--text);
+}
+.btn-outline-light {
+    color: var(--text) !important;
+    border: 1px solid var(--text) !important;
+}
+.btn-light {
+    background-color: var(--text) !important;
+    color: var(--background) !important;
+
 }
 /* Other styles */
 
@@ -202,6 +256,14 @@ textarea.form-control {
 .navbar-brand > h1 {
     font-size: 1.5rem !important;
 }
+.navbar-toggler {
+    color: var(--text) !important;
+    border: var(--text) !important;
+}
+.navbar-toggler:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
 
 hr {
     border-top: 2px var(--primary) solid !important;
@@ -229,10 +291,6 @@ hr {
     max-height: 500px !important;
     object-fit: cover;
     border-radius: 24px;
-    border: 2px var(--primary) solid;
-}
-.isi {
-    text-align: justify !important;
 }
 .content {
     padding-left: 16%;
@@ -245,15 +303,10 @@ hr {
     font-weight: 600 !important;
 }
 ::placeholder {
-    color: #c0c9de !important;
+    color: var(--text) !important;
+    opacity: 0.5 !important;
 }
-.background-dark {
-    /* From https://css.glass */
-    background: rgba(6, 11, 14, 0.46) !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-    backdrop-filter: blur(7.1px) !important;
-    -webkit-backdrop-filter: blur(7.1px) !important;
-}
+
 @media (max-width: 768px) {
     /* Adjust 768px as needed */
     .img-bs {

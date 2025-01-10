@@ -133,7 +133,7 @@ export default function EditBook() {
     };
 
     return (
-        <div className='container'>
+        <div className='container pt-4'>
             <div className='content'>
                 <div className='space-y-4'>
                     <h1 className='bookTitle'>Edit Book</h1>
@@ -152,7 +152,7 @@ export default function EditBook() {
                                 id='title'
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className='form-control background-dark text-white border-2 border-secondary rounded p-2'
+                                className='form-control border-2 border-secondary rounded p-2'
                                 placeholder='Enter book title...'
                                 required
                             />
@@ -162,7 +162,7 @@ export default function EditBook() {
                             <label htmlFor='notes' className='block font-semibold mb-1 h5'>
                                 Notes
                             </label>
-                            <ReactQuill value={notes} onChange={setNotes} className='background-dark text-white border-2 border-secondary rounded quill-custom' />
+                            <ReactQuill value={notes} onChange={setNotes} className='border-2 border-secondary rounded quill-custom' />
                         </div>
 
                         <div className='mt-2'>
