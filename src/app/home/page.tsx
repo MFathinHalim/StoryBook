@@ -149,7 +149,7 @@ export default function Homepage() {
                             Have some idea ?
                         </a>
                         <a href='/ai' className='btn secondary-btn'>
-                            Try Write with AI
+                            Write with AI
                         </a>
                     </div>
                 </div>
