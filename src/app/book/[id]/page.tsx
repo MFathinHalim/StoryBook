@@ -136,7 +136,6 @@ export default function GetBook() {
       }
 
       const data = await response.json();
-      console.log(data);
       setComments((prevComments: any) =>
         prevComments.map((comment: any) => {
           if (comment._id === commentId) {
@@ -267,13 +266,13 @@ export default function GetBook() {
               className="btn secondary-btn rounded-pill"
               onClick={handleAiSummary}
             >
-              {loadingSummary ? "Generating Summary..." : "AI Summary"}
+              {loadingSummary ? "Generating" : "Summary"}
             </button>
             <a
               href={`/book/edit/${book.id}`}
               className="btn accent-btn rounded-pill"
             >
-              Copy / Edit
+              Fork
             </a>
             <button className="btn primary-btn rounded-pill">Share</button>
           </div>
