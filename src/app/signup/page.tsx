@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -43,6 +43,51 @@ export default function SignUpForm() {
             setErrorMessage("Network error. Please check your connection and try again.");
         }
     };
+
+   const refreshAccessToken = async () => {
+        if(sessionStorage.getItem("token")) {
+          return window.location.href = "/home";  
+        }
+
+        const response = await fetch("/api/user/refreshToken", {
+          method: "POST",
+          credentials: "include", // Ensure cookies are sent
+        });    const refreshAccessToken = async () => {
+        if(sessionStorage.getItem("token")) {
+          return window.location.href = "/home";  
+        }
+
+        const response = await fetch("/api/user/refreshToken", {
+          method: "POST",
+          credentials: "include", // Ensure cookies are sent
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        if (!data.token) return;
+        sessionStorage.setItem("token", data.token);
+        return window.location.href = "/home"; 
+      }
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        if (!data.token) return;
+        sessionStorage.setItem("token", data.token);
+        return window.location.href = "/home"; 
+      }
+    
+    useEffect(() => {
+      async function callToken() {
+        await refreshAccessToken();
+      }
+      callToken();
+    }, [])  
 
     return (
         <div className='container'>

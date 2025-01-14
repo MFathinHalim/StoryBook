@@ -21,11 +21,11 @@ export default function Navbar(): JSX.Element {
       });
 
       if (!response.ok) {
-        return (window.location.href = "/login");
+        return ;
       }
 
       const data = await response.json();
-      if (!data.token) window.location.href = "/login";
+      if (!data.token) return;
       sessionStorage.setItem("token", data.token);
       return data.token;
     } catch (error) {
@@ -47,8 +47,6 @@ useEffect(() => {
       if (response.ok) {
         const check = await response.json();
         setUsername(check.username);
-      } else {
-        console.error("Failed to fetch user information");
       }
     } catch (error) {
       console.error("An error occurred:", error);
