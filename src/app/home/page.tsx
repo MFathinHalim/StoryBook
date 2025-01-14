@@ -11,7 +11,24 @@ export default function Homepage() {
     const [currentPage, setCurrentPage] = useState(1); // Untuk mengelola halaman
     const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada buku untuk dimuat
     const { ref, inView } = useInView();
-
+    
+    const handleLogout = async () => {
+      try {
+        const response = await fetch("/api/user/logout", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+        });
+        
+        if (response.ok) {
+          sessionStorage.clear();
+          window.location.href = "/login"
+        }
+      } catch (error) {
+        return ;
+      }
+    }
     const refreshAccessToken = async () => {
         try {
             if (sessionStorage.getItem("token")) {
@@ -24,6 +41,7 @@ export default function Homepage() {
             });
 
             if (!response.ok) {
+                handleLogout();
                 return (window.location.href = "/login");
             }
 
