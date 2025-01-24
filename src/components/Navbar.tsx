@@ -26,14 +26,12 @@ export default function Navbar(): JSX.Element {
 
       const data = await response.json();
       if (!data.token) return;
-      sessionStorage.setItem("token", data.token);
       return data.token;
     } catch (error) {
       return null;
     }
   };
 useEffect(() => {
-  if(isLanding) {
     const fetchData = async () => {
         // Refresh the access token
         const tokenTemp = await refreshAccessToken();
@@ -48,11 +46,12 @@ useEffect(() => {
         const check = await response.json();
         setUsername(check.username);
       }
+
+      return
     }
     
     setPath(window.location.pathname);
     fetchData();
-  }
 }, [username]);
 
 

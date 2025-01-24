@@ -45,25 +45,7 @@ export default function LoginForm() {
         const response = await fetch("/api/user/refreshToken", {
           method: "POST",
           credentials: "include", // Ensure cookies are sent
-        });    const refreshAccessToken = async () => {
-        if(sessionStorage.getItem("token")) {
-          return window.location.href = "/home";  
-        }
-
-        const response = await fetch("/api/user/refreshToken", {
-          method: "POST",
-          credentials: "include", // Ensure cookies are sent
-        });
-
-        if (!response.ok) {
-          return;
-        }
-
-        const data = await response.json();
-        if (!data.token) return;
-        sessionStorage.setItem("token", data.token);
-        return window.location.href = "/home"; 
-      }
+        });   
 
         if (!response.ok) {
           return;
