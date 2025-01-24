@@ -28,7 +28,7 @@ export default function Homepage() {
             }
 
             const data = await response.json();
-            if (!data.token) window.location.href = "/login";
+            if (!data.token) return window.location.href = "/login";
             sessionStorage.setItem("token", data.token);
             return data.token;
         } catch (error) {

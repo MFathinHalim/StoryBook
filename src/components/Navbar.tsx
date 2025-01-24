@@ -33,30 +33,32 @@ export default function Navbar(): JSX.Element {
     }
   };
 useEffect(() => {
-  const fetchData = async () => {
-    try {
-      // Refresh the access token
-      const tokenTemp = await refreshAccessToken();
+  if(landing) {
+    const fetchData = async () => {
+      try {
+        // Refresh the access token
+        const tokenTemp = await refreshAccessToken();
 
-      // Check user information
-      const response = await fetch(`/api/user/check`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${tokenTemp}` },
-      });
+        // Check user information
+        const response = await fetch(`/api/user/check`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${tokenTemp}` },
+        });
 
-      if (response.ok) {
-        const check = await response.json();
-        setUsername(check.username);
-      } else {
-        console.error("Failed to fetch user information");
+        if (response.ok) {
+          const check = await response.json();
+          setUsername(check.username);
+        } else {
+          console.error("Failed to fetch user information");
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
       }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  };
+    };
 
-  setPath(window.location.pathname);
-  fetchData();
+    setPath(window.location.pathname);
+    fetchData();
+  }
 }, [username]);
 
 
