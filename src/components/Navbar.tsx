@@ -21,11 +21,11 @@ export default function Navbar(): JSX.Element {
       });
 
       if (!response.ok) {
-        return (window.location.href = "/login");
+        return ;
       }
 
       const data = await response.json();
-      if (!data.token) window.location.href = "/login";
+      if (!data.token) return;
       sessionStorage.setItem("token", data.token);
       return data.token;
     } catch (error) {
@@ -35,7 +35,6 @@ export default function Navbar(): JSX.Element {
 useEffect(() => {
   if(landing) {
     const fetchData = async () => {
-      try {
         // Refresh the access token
         const tokenTemp = await refreshAccessToken();
 
@@ -45,17 +44,12 @@ useEffect(() => {
           headers: { Authorization: `Bearer ${tokenTemp}` },
         });
 
-        if (response.ok) {
-          const check = await response.json();
-          setUsername(check.username);
-        } else {
-          console.error("Failed to fetch user information");
-        }
-      } catch (error) {
-        console.error("An error occurred:", error);
+      if (response.ok) {
+        const check = await response.json();
+        setUsername(check.username);
       }
-    };
-
+    }
+    
     setPath(window.location.pathname);
     fetchData();
   }

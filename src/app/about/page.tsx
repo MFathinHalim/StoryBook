@@ -12,7 +12,7 @@ export default function AboutUs() {
             <section className="mb-5">
                 <h2>About the Application</h2>
                 <p>
-                    This application was created by <strong><a href="https://www.fathin.my.id">M. Fathin Halim</a></strong> to provide a platform for users to explore, share, and publish stories. The tools used to build this application include:
+                    This application was created by <strong><a href="https://mfathinhalim.github.io">M. Fathin Halim</a></strong> to provide a platform for users to explore, share, and publish stories. The tools used to build this application include:
                 </p>
                 <ul>
                     <li><strong>Next.js:</strong> A powerful React framework for server-side rendering and static site generation.</li>
