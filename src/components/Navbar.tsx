@@ -33,7 +33,7 @@ export default function Navbar(): JSX.Element {
     }
   };
 useEffect(() => {
-  if(landing) {
+  if(isLanding) {
     const fetchData = async () => {
         // Refresh the access token
         const tokenTemp = await refreshAccessToken();
