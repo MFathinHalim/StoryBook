@@ -89,7 +89,7 @@ export default function BookShortcut({ book, refreshAccessToken }: any) {
 
                 </div>
                 <div className='d-flex px-1 justify-content-between w-100 bookSc'>
-                    <p className='karla book-title-2 secondary-text my-0 '>{book.notes && book.notes.replace(/<\/?[^>]+(>|$)/g, "")}</p>
+                    <p className='karla book-title-2 secondary-text my-0'>{book.notes && book.notes.replace(/<\/?[^>]+(>|$)/g, "")}</p>
                 </div>
             </div>
         </>

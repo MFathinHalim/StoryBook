@@ -181,6 +181,9 @@ textarea.form-control {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--accent); 
 }
+.isi {
+    text-align: justify!important;
+}
 .img-bs {
     margin: 0 !important;
     padding: 0 !important;

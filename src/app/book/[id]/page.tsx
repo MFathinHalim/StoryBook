@@ -282,7 +282,7 @@ export default function GetBook() {
             </div>
           )}
           <div
-            className="isi mt-2 karla"
+            className="isi mt-2 karla text-justify "
             dangerouslySetInnerHTML={{ __html: book.notes }}
           />
         </div>
