@@ -1,125 +1,156 @@
 "use client";
-import BookShortcut from "@/components/Bookshortcut";
-import Loading from "@/components/Loading";
-import { useEffect, useState } from "react";
 
 export default function Homepage() {
-    const [user, setUser] = useState<userType | null>(null); // User state
-    const [books, setBooks] = useState<bookType[]>([]);
-
-    const refreshAccessToken = async () => {
-        try {
-            if (sessionStorage.getItem("token")) {
-                return sessionStorage.getItem("token");
-            }
-
-            const response = await fetch("/api/user/refreshToken", {
-                method: "POST",
-                credentials: "include", // Ensure cookies are sent
-            });
-
-            if (!response.ok) {
-                return 
-           }
-
-            const data = await response.json();
-            if (!data.token) return
-            sessionStorage.setItem("token", data.token);
-            return data.token;
-        } catch (error) {
-            console.error("Error refreshing access token:", error);
-            return null;
-        }
-    };
-
-    useEffect(() => {
-        async function fetchUserData() {
-            try {
-                const tokenTemp = await refreshAccessToken();
-                if (!tokenTemp) {
-                    console.warn("No token available");
-                    return;
-                }
-
-                const response = await fetch(`/api/user/check`, {
-                    method: "POST",
-                    headers: { Authorization: `Bearer ${tokenTemp}` },
-                });
-
-                if (!response.ok) {
-                    return
-                }
-
-                const check = await response.json();
-                setUser(check);
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                setUser(null);
-            }
-        }
-
-        // Only fetch data if user is null
-        if (user === null) {
-            fetchUserData();
-        }
-    }, [user]);
-
-
-
   return (
-  <div className="d-flex flex-column align-items-center" style={{ overflow: "hidden" }}>
-    {/* Hero Section */}
-    <div className="d-flex justify-content-center align-items-center" style={{ height: "75vh", overflow: "hidden" }}>
-      <div className="container">
-        <div className="text-center position-relative">
-          <img
-            className="pfp-landing-blur"
-            src={user?.pp || 'https://img.freepik.com/free-photo/anime-style-character-space_23-2151133935.jpg?semt=ais_hybrid'}
-            alt={`profile picture dari ${user?.username || ""}`}
-          />
-          <div className="position-absolute top-50 start-50 translate-middle w-100 text-center" style={{ zIndex: 1 }}>
-            <h1 className="mt-3 mb-0">Story Book</h1>
-            <h3 className="mt-0 mb-0 secondary-text">The place where your story is written</h3>
-            <div className="d-flex gap-2 mt-3 justify-content-center">
-              <a href={user?.username ? "/home" : "/login"} className="btn primary-btn">Have some Ideas?</a>
-            </div>
+    <>
+      {/* Hero Section (punya kamu, tetap dipertahankan) */}
+      <div className="container py-lg-5 d-flex align-items-center justify-content-center" style={{ minHeight: "80vh", overflow: "hidden" }}>
+        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between gap-5 w-100">
+          <div className="py-5 position-relative text-center text-lg-start">
+            <h2 className="mb-0" style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Hi, Welcome to</h2>
+            <h1 className="mt-2 fw-bold" style={{ fontSize: "clamp(3rem, 8vw, 6rem)" }}>Story Book</h1>
+            <p className="mt-4" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}>
+              Sebuah platform ringan dan ramah pengguna untuk menulis, menyimpan, dan membagikan cerita ciptaanmu. StoryBook hadir sebagai ruang digital yang mendukung kreativitas tanpa distraksi.
+            </p>
+            <a href="/login" className="btn btn-primary rounded-pill px-5 mt-3">Read</a>
+            <br />
+            <p className="pt-5" style={{ fontSize: "clamp(0.8rem, 2vw, 1rem)" }}>Made with ❤️ by M.Fathin Halim</p>
+          </div>
+
+          <div className="text-center text-lg-end">
+            <img
+              className="rounded shadow-lg d-none d-lg-block"
+              style={{ maxHeight: "70vh", transition: "transform 0.3s" }}
+              src="https://ik.imagekit.io/9hpbqscxd/SB/cover-02238115420610054.jpg?updatedAt=1735026872673"
+              alt="Story Book Cover"
+            />
           </div>
         </div>
       </div>
-    </div>
 
-    {/* Key Features */}
-    <div className="container text-center mt-5">
-      <h2 className="mb-4">Why Choose Story Book?</h2>
-      <div className="row">
-        <div className="col-md-4">
-          <i className="fa fa-pencil-alt fa-3x mb-3 text-primary"></i>
-          <h5>Write with Ease</h5>
-          <p>Simple and intuitive tools to bring your story to life.</p>
-        </div>
-        <div className="col-md-4">
-          <i className="fa fa-users fa-3x mb-3 text-primary"></i>
-          <h5>Connect with Others</h5>
-          <p>Share ideas, discuss, and grow with a vibrant community.</p>
-        </div>
-        <div className="col-md-4">
-          <i className="fa fa-rocket fa-3x mb-3 text-primary"></i>
-          <h5>Publish Instantly</h5>
-          <p>Reach readers globally with just a click.</p>
-        </div>
-      </div>
-    </div>
-               <div className="container my-4 border border-dark p-3 rounded-4">
-                <div>
-                    <h3>About Developer</h3>
-                    <p>
-                        This web made by a middle school student name <strong><a href="https://www.fathin.my.id">M.Fathin Halim</a></strong>, an indie dev who always want to try his idea into a real life.
-                    </p>
+      {/* Section 2 — Featured Categories */}
+      <section className="py-5" style={{ backgroundColor: "#FFFDF9" }}>
+        <div className="container text-center">
+          <h2 className="fw-bold mb-4">Temukan Cerita Berdasarkan Suasana Hatimu ✨</h2>
+          <div className="row justify-content-center g-4">
+            {["Romance", "Fantasy", "Action", "Mystery"].map((genre, i) => (
+              <div key={i} className="col-6 col-md-4 col-lg-2">
+                <div className="p-4 rounded-4 shadow-sm bg-white h-100 border hover-scale">
+                  <h5 className="fw-semibold mb-0">{genre}</h5>
                 </div>
-            </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+<section
+  className="container my-5 py-5"
+  style={{
+    borderRadius: "1.5rem",
+  }}
+>
+  <div className="row align-items-center justify-content-between">
+    {/* Image */}
+    <div className="col-lg-5 text-center position-relative mb-4 mb-lg-0">
+      <div
+        className="rounded-4 shadow-lg overflow-hidden"
+        style={{
+          transform: "scale(1)",
+          transition: "all 0.5s ease",
+        }}
+      >
+        <img
+          src="https://img.wattpad.com/cover/401389195-256-k563545.jpg"
+          alt="Jelajahi Cerita"
+          className="img-fluid rounded-4"
+          style={{
+            objectFit: "cover",
+            height: "400px",
+            width: "100%",
+            filter: "brightness(0.95) contrast(1.05)",
+          }}
+        />
+      </div>
+      <div
+        className="position-absolute top-0 start-0 w-100 h-100 rounded-4"
+        style={{
+          background:
+            "linear-gradient(to bottom right, rgba(0,0,0,0.15), rgba(255,255,255,0.05))",
+          pointerEvents: "none",
+        }}
+      ></div>
+    </div>
 
+    {/* Text */}
+    <div
+      className="col-lg-6 mb-4 mb-lg-0"
+
+    >
+      <h2
+        className="fw-bold mb-3"
+        style={{
+          fontSize: "clamp(2rem, 5vw, 3rem)",
+          color: "#1e1e2f",
+        }}
+      >
+        🌍 Jelajahi Dunia Cerita
+      </h2>
+      <p
+        style={{
+          fontSize: "clamp(1rem, 2vw, 1.25rem)",
+          lineHeight: "1.8",
+          color: "#444",
+        }}
+      >
+        Di StoryBook, setiap halaman adalah petualangan baru.  
+        Temukan kisah yang menggugah, menenangkan, dan kadang membuatmu berpikir
+        ulang tentang makna kehidupan.  
+        Semua ditulis oleh penulis muda penuh imajinasi — mungkin salah satunya kamu.
+      </p>
+      <a
+        href="/book/publish"
+        className="btn btn-primary rounded-pill px-5 py-2 mt-3 shadow-sm"
+        style={{
+          border: "none",
+          transition: "transform 0.3s ease",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        Jelajahi Sekarang
+      </a>
+    </div>
   </div>
-);
+
+</section>
 
 
+
+      {/* Section 4 — Community */}
+      <section className="py-5" style={{ backgroundColor: "#F5F8F2" }}>
+        <div className="container text-center">
+          <h2 className="fw-bold mb-4">👥 Bergabung dengan Komunitas Penulis</h2>
+          <p className="mb-5 mx-auto" style={{ maxWidth: "600px" }}>
+            Di StoryBook, kamu gak cuma nulis — kamu tumbuh bareng komunitas penulis lain. Dapatkan inspirasi, kritik membangun, dan kolaborasi yang seru!
+          </p>
+        </div>
+      </section>
+
+      {/* Section 5 — Footer */}
+      <footer className="py-4 text-center" style={{ backgroundColor: "#EDEBE5" }}>
+        <p className="mb-0 text-muted">© 2025 StoryBook — Dibuat dengan semangat dan secangkir kopi ☕</p>
+      </footer>
+
+      {/* CSS tambahan untuk efek hover */}
+      <style jsx>{`
+        .hover-scale {
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .hover-scale:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+      `}</style>
+    </>
+  );
 }

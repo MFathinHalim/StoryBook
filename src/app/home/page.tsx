@@ -5,190 +5,128 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 export default function Homepage() {
-    const [user, setUser] = useState<userType | null>(null); // User state
+    const [user, setUser] = useState<userType | null>(null);
     const [books, setBooks] = useState<bookType[]>([]);
     const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1); // Untuk mengelola halaman
-    const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada buku untuk dimuat
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const { ref, inView } = useInView();
-    
+
     const handleLogout = async () => {
-      try {
-        const response = await fetch("/api/user/logout", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json"
-          },
-        });
-        
-        if (response.ok) {
-          sessionStorage.clear();
-          window.location.href = "/login"
-        }
-      } catch (error) {
-        return ;
-      }
-    }
+        try {
+            const response = await fetch("/api/user/logout", { method: "DELETE" });
+            if (response.ok) {
+                sessionStorage.clear();
+                window.location.href = "/login";
+            }
+        } catch {}
+    };
+
     const refreshAccessToken = async () => {
         try {
-            if (sessionStorage.getItem("token")) {
-                return sessionStorage.getItem("token");
-            }
+            const existing = sessionStorage.getItem("token");
+            if (existing) return existing;
 
             const response = await fetch("/api/user/refreshToken", {
                 method: "POST",
-                credentials: "include", // Ensure cookies are sent
+                credentials: "include",
             });
 
-            if (!response.ok) {
-                handleLogout();
-                return (window.location.href = "/login");
-            }
+            if (!response.ok) return handleLogout();
 
             const data = await response.json();
-            if (!data.token) return window.location.href = "/login";
+            if (!data.token) return handleLogout();
             sessionStorage.setItem("token", data.token);
             return data.token;
-        } catch (error) {
-            console.error("Error refreshing access token:", error);
+        } catch {
+            handleLogout();
             return null;
         }
     };
 
-    useEffect(() => {
-        async function fetchUserData() {
-            try {
-                const tokenTemp = await refreshAccessToken();
-                if (!tokenTemp) {
-                    console.warn("No token available");
-                    return;
-                }
-
-                const response = await fetch(`/api/user/check`, {
-                    method: "POST",
-                    headers: { Authorization: `Bearer ${tokenTemp}` },
-                });
-
-                if (!response.ok) {
-                    window.location.href = "/";
-                }
-
-                const check = await response.json();
-                setUser(check);
-                fetchBooks(check._id, tokenTemp, currentPage); // Fetch books after user data is loaded
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                setUser(null);
-            }
-        }
-
-        // Only fetch data if user is null
-        if (user === null) {
-            fetchUserData();
-        }
-    }, [user, currentPage]);
-
     async function fetchBooks(userId: string, token: string, page: number) {
         try {
-            const fetchBook = await fetch(`/api/book/get/userId/${userId}?page=${page}&limit=9`, {
+            const res = await fetch(`/api/book/get/userId/${userId}?page=${page}&limit=9`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+            const data = await res.json();
 
-            if (!fetchBook.ok) {
-                console.error("Error Fetching Books");
-                throw new Error("Error fetching books");
-            }
-            const booksFetch = await fetchBook.json();
-            if (booksFetch.books.length > 0 && page !== 1) {
-                setBooks((prevBooks) => [...prevBooks, ...booksFetch.books]);
-            } else if (page === 1) {
-                setBooks(booksFetch.books);
+            if (data.books.length > 0) {
+                setBooks((prev) => (page === 1 ? data.books : [...prev, ...data.books]));
             } else {
-                setHasMore(false); // No more books to load
+                setHasMore(false);
             }
-        } catch (error) {
-            console.error("Error fetching books:", error);
+        } catch (e) {
+            console.error(e);
         } finally {
             setLoading(false);
         }
     }
 
-   useEffect(() => {
-    if (inView) {
-        const loadMoreBooks = async () => {
-            if (hasMore && !loading) {
-                try {
-                    const tokenTemp = await refreshAccessToken();
-                    if (!tokenTemp) {
-                        console.warn("No token available");
-                        return;
-                    }
-                    await fetchBooks(user?._id || "", tokenTemp, currentPage + 1); // Increment page here
-                    setCurrentPage((prevPage) => prevPage + 1); // Update page number
-                } catch (error) {
-                    console.error("Error loading more books:", error);
-                }
-            }
-        };
+    useEffect(() => {
+        async function load() {
+            const token = await refreshAccessToken();
+            if (!token) return;
+            const userRes = await fetch(`/api/user/check`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-        loadMoreBooks();
-    }
-}, [inView, hasMore, loading, user?._id]);
+            const userData = await userRes.json();
+            setUser(userData);
+            fetchBooks(userData._id, token, currentPage);
+        }
 
+        if (!user) load();
+    }, [user]);
 
-    // Fallback while loading user
-    if (user === null || loading) {
-        return <Loading />;
-    }
+    useEffect(() => {
+        if (inView && hasMore && !loading && user?._id) {
+            const loadMore = async () => {
+                const token = await refreshAccessToken();
+                await fetchBooks(user._id, token!, currentPage + 1);
+                setCurrentPage((p) => p + 1);
+            };
+            loadMore();
+        }
+    }, [inView]);
+
+    if (user === null || loading) return <Loading />;
 
     return (
-        <div>
-            <div className='container mt-4 py-3'>
-                <div className='text-center'>
-                    <div style={{ position: "relative" }}>
-                        <a href={`/profile/${user.username  }`}>
-                            <img
-                                className='pfp-home'
-                                src={user?.pp || ""}
-                                alt={`profile picture from ${user.username}`}
-                                style={{
-                                    position: "absolute",
-                                    zIndex: 1,
-                                }}
-                            />
-                            <img className='pfp-home-blur' src={user?.pp || ""} alt={`profile picture from ${user.username}`} />
-                        </a>
-                    </div>
+        <div className='container mt-4 py-3'>
+            {/* Profile Section */}
 
-                    <h1 className='mt-3 mb-2'>Hello, {user?.name || user?.username}</h1>
-                    <div className='secondary-text karla pb-1' dangerouslySetInnerHTML={{ __html: user?.desc || "No Description" }} />
-                    <div className='d-flex gap-2 justify-content-center'>
-                        <a href='/book/add' className='btn primary-btn'>
-                            Have some idea ?
-                        </a>
-                        <a href='/ai' className='btn secondary-btn'>
-                            Try AI
-                        </a>
-                    </div>
-                </div>
-                <div className='mt-5 w-100'>
-                    <h3 className='button-container text-left'>Recent Stories</h3> {/* Teks rata kiri, lebar 100% */}
-                    {books.length > 0 ? (
-                        <div className="row">
-                            {books.map((book, index) => (
-                                <div key={book._id} className="col-md-4 col-sm-6">
-                                <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
+            <section className='text-center mb-5'>
+                <a href={`/profile/${user.username}`}>
+                    <img src={user?.pp || ""} alt={user.username} className='rounded-circle' style={{ width: "140px", height: "140px", objectFit: "cover" }} />
+                </a>
+                <h2 className='fw-bold my-2'>Hi, {user.username ? user.username.charAt(0).toUpperCase() + user.username.slice(1) : "Writer"}</h2>
+                <p className='text-muted mb-4'>Your personal library of stories and imagination.</p>
+                <a href='/create' className='btn btn-primary rounded-pill px-4 shadow-sm'>
+                    Create New Story
+                </a>
+            </section>
+
+            {/* Book Section */}
+            <div className='mt-5'>
+                <h3 className='fw-bold mb-4'>📚 Your Stories</h3>
+                {books.length > 0 ? (
+                    <div className='row row-cols-1 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-2'>
+                        {books.map((book) => (
+                            <div key={book._id}>
+                                <BookShortcut book={book} refreshAccessToken={refreshAccessToken} />
                             </div>
-                            ))}
-                            {loading && <Loading />}
-                        </div>
-                    ) : (
-                        <p>No books to display.</p>
-                    )}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className='text-muted text-center mt-5'>You haven’t written any stories yet.</p>
+                )}
             </div>
-                    <div ref={ref} />
 
+            <div ref={ref} className='my-4 text-center'>
+                {hasMore && loading && <Loading />}
+            </div>
         </div>
     );
 }

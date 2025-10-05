@@ -121,7 +121,7 @@ export default function Questions() {
         <div>
             <div className="container py-3">
                     {questions.length > 0 ? (
-                        <div className="row">
+                        <div className='row row-cols-1 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-2'>
                             {questions.map((question) => (
                                 <div key={question._id} className="col-md-4 col-sm-6">
                                     <BookShortcut key={question._id} book={question} refreshAccessToken={refreshAccessToken} />

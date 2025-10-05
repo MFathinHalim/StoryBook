@@ -132,7 +132,7 @@ export default function AddBooks() {
                             <label htmlFor='notes' className='block font-semibold mb-1 h5'>
                                 Notes
                             </label>
-                            <ReactQuill value={notes} onChange={setNotes} className='background-dark text-white border-2 border-secondary rounded quill-custom' />
+                            <ReactQuill value={notes} onChange={setNotes} className='bg-white border-2 border-black rounded quill-custom' />
                         </div>
 
                         <div className='mt-2'>
@@ -144,7 +144,7 @@ export default function AddBooks() {
                                 id='image'
                                 accept='image/*'
                                 onChange={handleImageChange}
-                                className='form-control background-dark text-white border-2 border-secondary rounded p-2'
+                                className='form-control border-2 border-secondary rounded p-2'
                             />
                         </div>
 
@@ -153,18 +153,18 @@ export default function AddBooks() {
                                 <button
                                     type='button'
                                     onClick={() => handleToggle("Publish")}
-                                    className={`btn ${tag === "Publish" ? "btn-light" : "btn-outline-light"} rounded-pill px-4 py-1`}>
+                                    className={`btn ${tag === "Publish" ? "btn-primary" : "btn-outline-primary"} btn-sm rounded-pill px-4 py-1`}>
                                     Publish
                                 </button>
                                 <button
                                     type='button'
                                     onClick={() => handleToggle("Question")}
-                                    className={`btn ${tag === "Question" ? "btn-light" : "btn-outline-light"} rounded-pill px-4 py-1`}>
+                                    className={`btn ${tag === "Question" ? "btn-secondary" : "btn-outline-secondary"} btn-sm rounded-pill px-4 py-1`}>
                                     Question?
                                 </button>
                             </div>
 
-                            <button type='submit' className='btn btn-sm primary-btn rounded-pill px-4 py-1' disabled={loading}>
+                            <button type='submit' className='btn btn-sm btn-primary px-4 py-1' disabled={loading}>
                                 {loading ? "Submitting..." : "Add Book"}
                             </button>
                         </div>

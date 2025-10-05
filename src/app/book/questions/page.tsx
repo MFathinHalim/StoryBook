@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import BookShortcut from "@/components/Bookshortcut";
 
-export default function Questions() {
+export default function books() {
     const [user, setUser] = useState<userType | null>(null); // User state
-    const [questions, setQuestions] = useState<bookType[]>([]);
+    const [books, setbooks] = useState<bookType[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1); // Untuk mengelola halaman
     const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada pertanyaan untuk dimuat
@@ -57,7 +57,7 @@ export default function Questions() {
 
                 const check = await response.json();
                 setUser(check);
-                fetchQuestions(check._id, tokenTemp, currentPage); // Fetch questions after user data is loaded
+                fetchbooks(check._id, tokenTemp, currentPage); // Fetch books after user data is loaded
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setUser(null);
@@ -70,19 +70,19 @@ export default function Questions() {
         }
     }, [user, currentPage]);
 
-    async function fetchQuestions(userId: string, token: string, page: number) {
+    async function fetchbooks(userId: string, token: string, page: number) {
         try {
-            const fetchQuestion = await fetch(`/api/book/get/questions?page=${page}&limit=9`, {
+            const fetchQuestion = await fetch(`/api/book/get/questions?page=${page}&limit=10`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            const questionsFetch = await fetchQuestion.json();
-            if (questionsFetch.books.length > 0 && page !== 1) {
-                setQuestions((prevQuestions) => [...prevQuestions, ...questionsFetch.books]);
+            const booksFetch = await fetchQuestion.json();
+            if (booksFetch.books.length > 0 && page !== 1) {
+                setbooks((prevbooks) => [...prevbooks, ...booksFetch.books]);
             } else if (page === 1) {
-                setQuestions(questionsFetch.books);
+                setbooks(booksFetch.books);
             } else {
-                setHasMore(false); // No more questions to load
+                setHasMore(false); // No more books to load
             }
         } catch (error) {
         } finally {
@@ -92,7 +92,7 @@ export default function Questions() {
 
     useEffect(() => {
         if (inView) {
-            const loadMoreQuestions = async () => {
+            const loadMorebooks = async () => {
                 if (hasMore && !loading) {
                     try {
                         const tokenTemp = await refreshAccessToken();
@@ -100,15 +100,15 @@ export default function Questions() {
                             console.warn("No token available");
                             return;
                         }
-                        await fetchQuestions(user?._id || "", tokenTemp, currentPage + 1); // Increment page here
+                        await fetchbooks(user?._id || "", tokenTemp, currentPage + 1); // Increment page here
                         setCurrentPage((prevPage) => prevPage + 1); // Update page number
                     } catch (error) {
-                        console.error("Error loading more questions:", error);
+                        console.error("Error loading more books:", error);
                     }
                 }
             };
 
-            loadMoreQuestions();
+            loadMorebooks();
         }
     }, [inView, hasMore, loading, user?._id]);
 
@@ -119,21 +119,23 @@ export default function Questions() {
 
     return (
         <div>
-         <div className="container py-3">
-                    {questions.length > 0 ? (
-                        <div className="row">
-                            {questions.map((question) => (
-                                <div key={question._id} className="col-md-4 col-sm-6">
-                                    <BookShortcut key={question._id} book={question} refreshAccessToken={refreshAccessToken} />
+            <div className='container py-3'>
+                <div>
+                    <h3 className='fw-bold mb-4'>Explore Questions</h3>
+                    {books.length > 0 ? (
+                        <div className='row row-cols-1 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-2'>
+                            {books.map((book) => (
+                                <div key={book._id}>
+                                    <BookShortcut book={book} refreshAccessToken={refreshAccessToken} />
                                 </div>
                             ))}
-                            {loading && <Loading />}
                         </div>
                     ) : (
-                        <p>No questions to display.</p>
+                        <p className='text-muted text-center mt-5'>You haven’t written any stories yet.</p>
                     )}
+                </div>
             </div>
-        <div ref={ref} />
-    </div>
+            <div ref={ref} />
+        </div>
     );
 }

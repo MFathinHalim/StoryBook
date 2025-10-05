@@ -11,32 +11,24 @@ export default function SignUpForm() {
     const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
 
-    const handleSubmit = async (event: Event | any) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        setErrorMessage(""); // Reset error message
+        setErrorMessage("");
 
         try {
             const response = await fetch("/api/user/signup", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.message) {
-                    router.push("/home"); // Redirect if signup is successful
-                }
+                if (data.message) router.push("/home");
             } else {
-                if (response.status === 409) {
-                    setErrorMessage("Username already exists. Please choose another.");
-                } else if (response.status === 401) {
-                    setErrorMessage("Invalid username or password. Please try again.");
-                } else {
-                    setErrorMessage("Server error. Please try again later.");
-                }
+                if (response.status === 409) setErrorMessage("Username already exists. Please choose another.");
+                else if (response.status === 401) setErrorMessage("Invalid username or password. Please try again.");
+                else setErrorMessage("Server error. Please try again later.");
             }
         } catch (error) {
             console.error("Error during signup:", error);
@@ -44,115 +36,89 @@ export default function SignUpForm() {
         }
     };
 
-   const refreshAccessToken = async () => {
-        if(sessionStorage.getItem("token")) {
-          return window.location.href = "/home";  
-        }
-
-        const response = await fetch("/api/user/refreshToken", {
-          method: "POST",
-          credentials: "include", // Ensure cookies are sent
-        });    const refreshAccessToken = async () => {
-        if(sessionStorage.getItem("token")) {
-          return window.location.href = "/home";  
-        }
-
-        const response = await fetch("/api/user/refreshToken", {
-          method: "POST",
-          credentials: "include", // Ensure cookies are sent
-        });
-
-        if (!response.ok) {
-          return;
-        }
-
+    const refreshAccessToken = async () => {
+        if (sessionStorage.getItem("token")) return (window.location.href = "/home");
+        const response = await fetch("/api/user/refreshToken", { method: "POST", credentials: "include" });
+        if (!response.ok) return;
         const data = await response.json();
         if (!data.token) return;
         sessionStorage.setItem("token", data.token);
-        return window.location.href = "/home"; 
-      }
+        window.location.href = "/home";
+    };
 
-        if (!response.ok) {
-          return;
-        }
-
-        const data = await response.json();
-        if (!data.token) return;
-        sessionStorage.setItem("token", data.token);
-        return window.location.href = "/home"; 
-      }
-    
     useEffect(() => {
-      async function callToken() {
-        await refreshAccessToken();
-      }
-      callToken();
-    }, [])  
+        async function callToken() {
+            await refreshAccessToken();
+        }
+        callToken();
+    }, []);
 
     return (
-        <div className='container'>
-            <div className='content'>
-                <div className='space-y-4'>
-                    <h1 className='bookTitle'>Sign Up</h1>
-                    {errorMessage && (
-                        <div className='alert alert-danger' role='alert'>
-                            {errorMessage}
-                        </div>
-                    )}
-                    <form onSubmit={handleSubmit} className='space-y-4'>
-                        <div className='mt-2'>
-                            <label htmlFor='username' className='block font-semibold mb-1 h5'>
-                                Username
-                            </label>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "90vh" }}>
+            <div className="card border border-black p-5 rounded-4" style={{ maxWidth: "500px", width: "90%" }}>
+                <h1 className="text-center mb-4">Bergabunglah</h1>
+
+                {errorMessage && (
+                    <div className="alert alert-danger" role="alert">
+                        {errorMessage}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+                    <div>
+                        <label htmlFor="username" className="form-label fw-semibold">
+                            Username
+                        </label>
+                        <input
+                            type="text"
+                            id="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="form-control border border-secondary p-2"
+                            placeholder="Enter your username..."
+                            maxLength={16}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="password" className="form-label fw-semibold">
+                            Password
+                        </label>
+                        <div className="input-group gap-2">
                             <input
-                                type='text'
-                                id='username'
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className='form-control background-dark text-white border-2 border-secondary rounded p-2'
-                                placeholder='Enter your username...'
-                                maxLength={16}
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="form-control border border-secondary"
+                                placeholder="Enter your password..."
                                 required
                             />
-                        </div>
-
-                        <div className='mt-2'>
-                            <label htmlFor='password' className='block font-semibold mb-1 h5'>
-                                Password
-                            </label>
-                            <div className='flex items-center'>
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    id='password'
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className='form-control background-dark text-white border-2 border-secondary rounded p-2 flex-grow'
-                                    placeholder='Enter your password...'
-                                    required
-                                />
-                                <button
-                                    type='button'
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className='secondary-btn btn mt-2 '
-                                    aria-label='Toggle Password Visibility'
-                                >
-                                    Show Password <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                                </button>
-                            </div>
-                        </div>
-                        <h5 className='mt-3'>
-                            Already have an account?{" "}
-                            <a href='/login' className='bold text-info text-decoration-underline'>
-                                Log in
-                            </a>
-                        </h5>
-                        <div className='text-end mt-2'>
-                            <button type='submit' className='btn btn-sm primary-btn rounded-pill px-4 py-1'>
-                                Sign Up
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="btn btn-outline-secondary rounded-pill"
+                                aria-label="Toggle Password Visibility"
+                            >
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                             </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div className="text-center">
+                        <h6>
+                            Already have an account?{" "}
+                            <a href="/login" className="text-primary text-decoration-underline fw-bold">
+                                Log in
+                            </a>
+                        </h6>
+                    </div>
+
+                    <button type="submit" className="btn btn-primary w-100 rounded-pill mt-3">
+                        Sign Up
+                    </button>
+                </form>
             </div>
         </div>
     );

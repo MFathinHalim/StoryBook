@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faShare, faCodeBranch } from "@fortawesome/free-solid-svg-icons";
 import { useInView } from "react-intersection-observer";
 
 export default function GetBook() {
@@ -13,352 +13,241 @@ export default function GetBook() {
 
   const [book, setBook] = useState<bookType | any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [comments, setComments] = useState<commentType[] | any>([]);
   const [newComment, setNewComment] = useState("");
-
   const [currentPage, setCurrentPage] = useState(0);
-  const [aiSummary, setAiSummary] = useState<string | null>(null); // State for AI summary
-  const [loadingSummary, setLoadingSummary] = useState(false); // Loading state for AI Summary
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState(false);
   const { ref, inView } = useInView();
-  const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada buku untuk dimuat
+  const [hasMore, setHasMore] = useState(true);
 
   const refreshAccessToken = async () => {
     try {
-      if (sessionStorage.getItem("token")) {
-        return sessionStorage.getItem("token");
-      }
+      const existing = sessionStorage.getItem("token");
+      if (existing) return existing;
 
-      const response = await fetch("/api/user/refreshToken", {
+      const res = await fetch("/api/user/refreshToken", {
         method: "POST",
-
-        credentials: "include", // Ensure cookies are sent
+        credentials: "include",
       });
-
-      if (!response.ok) {
-        window.location.href = "/login";
-      }
-
-      const data = await response.json();
-      if (!data.token) return (window.location.href = "/login");
-
+      const data = await res.json();
+      if (!data.token) window.location.href = "/login";
       sessionStorage.setItem("token", data.token);
       return data.token;
-    } catch (error) {
-      console.error("Error refreshing access token:", error);
-
-      return undefined;
+    } catch {
+      window.location.href = "/login";
     }
   };
+
   const fetchBookAndComments = async (page = 1) => {
     try {
       const token = await refreshAccessToken();
-      if (!token) throw new Error("Unable to retrieve access token");
+      if (!token) return;
+
       if (page === 1) {
         setLoading(true);
-        setError(null);
-
-        //headers: { Authorization: `Bearer ${token}` },
-
-        // Fetch Book
-        const bookResponse = await fetch(`/api/book/get/${id}`, {
+        const res = await fetch(`/api/book/get/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!bookResponse.ok) throw new Error("Failed to fetch book details");
-        const bookData = await bookResponse.json();
-        setBook(bookData);
+        const data = await res.json();
+        setBook(data);
       }
 
-      // Fetch Comments
-      const commentsResponse = await fetch(`/api/comment/${id}?page=${page}`, {
+      const commentRes = await fetch(`/api/comment/${id}?page=${page}`, {
         headers: { Authorization: `Bearer ${token}` },
-      }); // Get comments by book ID
-      if (!commentsResponse.ok)
-        console.error(
-          "Failed to fetch comments"
-        ); // Don't throw error, just log
-      else {
-        const commentsData = await commentsResponse.json();
-        if (page === 1) {
-          setComments(commentsData.comments);
-        } else {
-          // Jika bukan halaman pertama, gabungkan dengan komentar sebelumnya
-          //@ts-ignore
-          setComments((prevComments) => [
-            ...prevComments,
-            ...commentsData.comments,
-          ]);
-        }
-        if(commentsData.comments.length === 0) {
-            setHasMore(false); // No more books to load
-        }
-      }
-    } catch (err) {
-      return;
+      });
+      const commentData = await commentRes.json();
+
+      if (page === 1) setComments(commentData.comments);
+      else setComments((prev: any) => [...prev, ...commentData.comments]);
+
+      if (commentData.comments.length === 0) setHasMore(false);
+    } catch {
+      //
     } finally {
       setCurrentPage(page);
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    if (!id) return;
-
-    fetchBookAndComments(currentPage + 1);
+    if (id) fetchBookAndComments(1);
   }, [id]);
-    useEffect(() => {
-    if (inView) {
-        const loadMoreComments = async () => {
-            if (hasMore && !loading) {
-                try {
-                    await fetchBookAndComments(currentPage + 1); // Increment page here
-                } catch (error) {
-                    console.error("Error loading more books:", error);
-                }
-            }
-        };
 
-        loadMoreComments();
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      fetchBookAndComments(currentPage + 1);
     }
-}, [inView, hasMore, loading]);
-  const handleUpvote = async (commentId: string) => {
-    try {
-      const token = await refreshAccessToken();
-      if (!token) throw new Error("Unable to retrieve access token");
-
-      const response = await fetch(`/api/comment/upvote/${commentId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to upvote comment");
-      }
-
-      const data = await response.json();
-      setComments((prevComments: any) =>
-        prevComments.map((comment: any) => {
-          if (comment._id === commentId) {
-            // Update jumlah upvote
-            return { ...comment, upvote: data.total };
-          }
-          return comment;
-        })
-      );
-    } catch (err) {
-      alert((err as Error).message);
-    }
-  };
+  }, [inView, hasMore, loading]);
 
   const handlePostComment = async () => {
     if (!newComment.trim()) return;
+    const token = await refreshAccessToken();
+    const res = await fetch(`/api/comment/post/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ comment: newComment }),
+    });
+    const data = await res.json();
+    setComments((prev: any) => [data.comment, ...prev]);
+    setNewComment("");
+  };
 
-    try {
-      const token = await refreshAccessToken();
-      if (!token) throw new Error("Unable to retrieve access token");
-
-      const response = await fetch(`/api/comment/post/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ comment: newComment }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to post comment");
-      }
-      const data = await response.json();
-      //@ts-ignore
-
-      comments.push(data.comment);
-      setNewComment("");
-    } catch (err) {
-      //@ts-ignore
-      alert(err.message);
-    }
+  const handleUpvote = async (commentId: string) => {
+    const token = await refreshAccessToken();
+    const res = await fetch(`/api/comment/upvote/${commentId}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setComments((prev: any) =>
+      prev.map((c: any) =>
+        c._id === commentId ? { ...c, upvote: data.total } : c
+      )
+    );
   };
 
   const handleAiSummary = async () => {
     if (!book?.notes) return;
-
     try {
       setLoadingSummary(true);
       const token = await refreshAccessToken();
-      if (!token) throw new Error("Unable to retrieve access token");
-
-      const formData = new FormData();
-      formData.append("notes", book.notes);
-
-      const response = await fetch("/api/ai/summary", {
+      const form = new FormData();
+      form.append("notes", book.notes);
+      const res = await fetch("/api/ai/summary", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+        body: form,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to generate AI summary");
-      }
-
-      const data = await response.json();
-      setAiSummary(data.result); // Save AI summary to state
-    } catch (err) {
-      alert("Sorry, but this book is to long for current ai :(");
+      const data = await res.json();
+      setAiSummary(data.result);
+    } catch {
+      alert("Book too long for AI summary 😅");
     } finally {
       setLoadingSummary(false);
     }
   };
 
-  if (loading) return <Loading />;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-  if (!book) return <p>No book found</p>;
-  function formatTanggal(tanggalAwal: string) {
-    const [bulan, tanggal, tahun] = tanggalAwal.split("/"); // Memisahkan tanggal, bulan, dan tahun
-
+  function formatTanggal(t: string) {
+    const [bulan, tanggal, tahun] = t.split("/");
     const namaBulan = [
-      // Array nama bulan
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
+      "Januari","Februari","Maret","April","Mei","Juni",
+      "Juli","Agustus","September","Oktober","November","Desember",
     ];
-    const bulanIndex = parseInt(bulan) - 1; // Mendapatkan index bulan (dimulai dari 0)
-    const namaBulanFormatted = namaBulan[bulanIndex];
-    return `${tanggal} ${namaBulanFormatted} ${tahun}`; // Menggabungkan kembali dengan format baru
+    return `${tanggal} ${namaBulan[parseInt(bulan) - 1]} ${tahun}`;
   }
 
+  if (loading) return <Loading />;
+  if (!book) return <p className="text-center mt-5">No book found.</p>;
+
   return (
-    <div className="container pt-4">
-      <div className="content">
-        <div className="space-y-4">
-          <h5 className="bookTitle" style={{ opacity: "78%" }}>
-            {formatTanggal(book.time)}
-          </h5>
-          <h1 className="bookTitle">{book.title}</h1>
-          <a href={`/profile/${book.user.username}`}>
-            <h5 className="bookTitle" style={{ opacity: "78%" }}>
-              Write by {book.user.name ? book.user.name : book.user.username}
-            </h5>
+    <div className="container py-4">
+      <div className="mx-auto" style={{ maxWidth: "750px" }}>
+        {/* HEADER */}
+        <div className="mb-4">
+          <p className="text-muted small mb-1">{formatTanggal(book.time)}</p>
+          <h1 className="fw-bold lh-1 mb-2" style={{ fontSize: "2.5rem" }}>{book.title}</h1>
+          <a href={`/profile/${book.user.username}`} className="text-decoration-none text-secondary">
+            Ditulis oleh {book.user.name || book.user.username}
           </a>
-          {book.cover && (
-            <div>
-              <img
-                src={book.cover}
-                alt="Book cover"
-                className="mt-2 rounded shadow bookCover"
-              />
-            </div>
-          )}
-          <div className="d-flex gap-2 mt-2">
-            <button
-              className="btn secondary-btn rounded-pill"
-              onClick={handleAiSummary}
-            >
-              {loadingSummary ? "Generating" : "Summary"}
-            </button>
-            <a
-              href={`/book/edit/${book.id}`}
-              className="btn accent-btn rounded-pill"
-            >
-              Fork
-            </a>
-            <button className="btn primary-btn rounded-pill">Share</button>
-          </div>
-          {aiSummary && (
-            <div className="summary-box mt-3 p-3 border-1 rounded-3">
-              <h5 className="text-bold bold strong">AI Summary:</h5>
-              <p>{aiSummary}</p>
-            </div>
-          )}
-          <div
-            className="isi mt-2 karla text-justify "
-            dangerouslySetInnerHTML={{ __html: book.notes }}
-          />
         </div>
-        <h3 className="font-bold mb-2">Comments</h3>
-        <div className="comment-form rounded">
-          <div className="d-flex">
-            <div className="w-100">
-              <textarea
-                className="form-control border-2 border-secondary rounded p-2"
-                placeholder="Write a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                style={{
-                  resize: "none",
-                  height: "80px",
-                  wordWrap: "break-word",
-                }}
-              />
-            </div>
+
+        {/* COVER */}
+        {book.cover && (
+          <img
+            src={book.cover}
+            alt="Book Cover"
+            className="w-100 border border-black mb-4 shadow-sm"
+            style={{ height: "auto" }}
+          />
+        )}
+
+        {/* ACTIONS */}
+        <div className="d-flex flex-wrap gap-2 mb-4">
+          <a href={`/book/edit/${book.id}`} className="btn btn-primary rounded-pill px-4">
+            <FontAwesomeIcon icon={faCodeBranch} /> Fork
+          </a>
+          <button className="btn btn-secondary rounded-pill px-4">
+            <FontAwesomeIcon icon={faShare} /> Share
+          </button>
+          <button onClick={handleAiSummary} className="btn btn-outline-dark fw-bold rounded-pill px-4">
+            {loadingSummary ? "Generating..." : "AI Summary"}
+          </button>
+        </div>
+
+        {/* SUMMARY */}
+        {aiSummary && (
+          <div className="p-3 border border-black mb-4">
+            <h5 className="fw-bold mb-2">AI Summary</h5>
+            <p className="mb-0">{aiSummary}</p>
           </div>
-          <div className="text-end mt-2">
-            <button
-              onClick={handlePostComment}
-              className="btn btn-sm primary-btn rounded-pill px-3 py-1"
-              style={{ fontWeight: "bold" }}
-            >
+        )}
+
+        {/* CONTENT */}
+        <div
+          className="karla mb-5"
+          style={{
+            fontSize: "1.05rem",
+            lineHeight: "1.8",
+            color: "#2b2b2b",
+          }}
+          dangerouslySetInnerHTML={{ __html: book.notes }}
+        />
+
+        {/* COMMENTS */}
+        <div className="border-top pt-4">
+          <h4 className="fw-bold mb-3">Comments</h4>
+          <textarea
+            className="form-control mb-2"
+            placeholder="Write a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            style={{ height: "80px", resize: "none" }}
+          />
+          <div className="text-end mb-3">
+            <button onClick={handlePostComment} className="btn btn-dark rounded-pill px-4">
               Post
             </button>
           </div>
-        </div>
-        <div>
+
+          {/* Comment List */}
           {comments?.length > 0 ? (
-            <ul className="list-group border-0 comment-list py-3">
-              {comments.map((comment: any) => (
-                <li
-                  key={comment._id}
-                  className="my-2 list-group-item bg-transparent border-0 align-items-center p-0 d-flex justify-content-between"
-                >
-                  <div className="d-flex p-0 ">
+            <ul className="list-unstyled">
+              {comments.map((c: any) => (
+                <li key={c._id} className="py-3 border-bottom d-flex justify-content-between align-items-start">
+                  <div className="d-flex gap-3">
                     <img
-                      src={comment.user.pp || "https://via.placeholder.com/30"} // Use user avatar if available, otherwise placeholder
-                      alt="User Avatar"
-                      style={{ height: "35px" }}
-                      className="comment-avatar rounded-circle me-2"
+                      src={c.user.pp || "https://via.placeholder.com/35"}
+                      className="rounded-circle"
+                      width={35}
+                      height={35}
+                      alt="User"
                     />
-                    <div className="comment-user-info mb-0">
-                      <a href={`/profile/${comment.user.username}`}>
-                        <h5 className="comment-name mb-0">
-                          {comment.user.name || comment.user.username}
-                        </h5>
+                    <div>
+                      <a href={`/profile/${c.user.username}`} className="fw-semibold text-dark text-decoration-none">
+                        {c.user.name || c.user.username}
                       </a>
-                      <p
-                        className="my-0"
-                        style={{ wordWrap: "break-word", maxWidth: "55vw" }}
-                      >
-                        {comment.comment}
+                      <p className="mb-1" style={{ fontSize: "0.95rem", color: "#444" }}>
+                        {c.comment}
                       </p>
                     </div>
                   </div>
-                  <div className="comment-actions">
-                    <button
-                      onClick={() => handleUpvote(comment._id)}
-                      className="btn btn-sm danger-btn rounded-pill "
-                      style={{ fontWeight: "bold !important" }}
-                    >
-                      <FontAwesomeIcon icon={faHeart} />{" "}
-                      {comment.upvote.length || 0}
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleUpvote(c._id)}
+                    className="btn btn-sm btn-outline-danger rounded-pill"
+                  >
+                    <FontAwesomeIcon icon={faHeart} /> {c.upvote.length || 0}
+                  </button>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-center">No comments yet.</p>
+            <p className="text-muted">No comments yet.</p>
           )}
-          <div ref={ref} />
+          <div ref={ref}></div>
         </div>
       </div>
     </div>

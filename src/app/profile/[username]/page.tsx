@@ -6,191 +6,176 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 export default function Homepage() {
-    const params = useParams();
-    const username = params?.username;
+  const params = useParams();
+  const username = params?.username;
 
-    const [user, setUser] = useState<userType | null>(null); // User state
-    const [seeUser, setSeeUser] = useState<userType | null>(null); //! See User
-    const [books, setBooks] = useState<bookType[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1); // Untuk mengelola halaman
-    const [hasMore, setHasMore] = useState(true); // Untuk mengetahui jika masih ada buku untuk dimuat
-    const { ref, inView } = useInView();
+  const [user, setUser] = useState<userType | null>(null);
+  const [seeUser, setSeeUser] = useState<userType | null>(null);
+  const [books, setBooks] = useState<bookType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const { ref, inView } = useInView();
 
-    const refreshAccessToken = async () => {
-        try {
-            if (sessionStorage.getItem("token")) {
-                return sessionStorage.getItem("token");
-            }
+  const refreshAccessToken = async () => {
+    try {
+      if (sessionStorage.getItem("token")) return sessionStorage.getItem("token");
+      const response = await fetch("/api/user/refreshToken", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) return (window.location.href = "/login");
+      const data = await response.json();
+      if (!data.token) window.location.href = "/login";
+      sessionStorage.setItem("token", data.token);
+      return data.token;
+    } catch {
+      return null;
+    }
+  };
 
-            const response = await fetch("/api/user/refreshToken", {
-                method: "POST",
-                credentials: "include", // Ensure cookies are sent
-            });
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const tokenTemp = await refreshAccessToken();
+        if (!tokenTemp) return;
 
-            if (!response.ok) {
-                return (window.location.href = "/login");
-            }
+        const response = await fetch(`/api/user/check`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${tokenTemp}` },
+        });
+        if (!response.ok) return;
 
-            const data = await response.json();
-            if (!data.token) window.location.href = "/login";
-            sessionStorage.setItem("token", data.token);
-            return data.token;
-        } catch (error) {
-            return null;
-        }
-    };
+        const check = await response.json();
+        setUser(check);
 
-    useEffect(() => {
-        async function fetchUserData() {
-            try {
-                const tokenTemp = await refreshAccessToken();
-                if (!tokenTemp) {
-                    console.warn("No token available");
-                    return;
-                }
+        const fetchUser = await fetch(`/api/user/get/${username}`);
+        const userFetch = await fetchUser.json();
+        setSeeUser(userFetch);
 
-                const response = await fetch(`/api/user/check`, {
-                    method: "POST",
-                    headers: { Authorization: `Bearer ${tokenTemp}` },
-                });
-
-                if (!response.ok) {
-                    return
-                }
-
-                const check = await response.json();
-                setUser(check);
-                const fetchUser = await fetch(`/api/user/get/${username}`, {
-                    method: "GET"
-                });
-                const userFetch = await fetchUser.json();
-                setSeeUser(userFetch);
-
-                fetchBooks(userFetch._id, tokenTemp, currentPage); // Fetch books after user data is loaded
-            } catch (error) {
-                setUser(null);
-            }
-        }
-
-        // Only fetch data if user is null
-        if (user === null) {
-            fetchUserData();
-        }
-    }, [user, currentPage]);
-
-    async function fetchBooks(userId: string, token: string, page: number) {
-        try {
-            const fetchBook = await fetch(`/api/book/get/noPrivate/${userId}?page=${page}&limit=2`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            const booksFetch = await fetchBook.json();
-            if (booksFetch.books.length > 0 && page !== 1) {
-                setBooks((prevBooks) => [...prevBooks, ...booksFetch.books]);
-            } else if (page === 1) {
-                setBooks(booksFetch.books);
-            } else {
-                setHasMore(false); // No more books to load
-            }
-        } catch (error) {
-            return
-        } finally {
-            setLoading(false);
-        }
+        fetchBooks(userFetch._id, tokenTemp, currentPage);
+      } catch {
+        setUser(null);
+      }
     }
 
-   useEffect(() => {
-    if (inView) {
-        const loadMoreBooks = async () => {
-            if (hasMore && !loading) {
-                try {
-                    const tokenTemp = await refreshAccessToken();
-                    if (!tokenTemp) {
-                        console.warn("No token available");
-                        return;
-                    }
-                    await fetchBooks(seeUser?._id || "", tokenTemp, currentPage + 1); // Increment page here
-                    setCurrentPage((prevPage) => prevPage + 1); // Update page number
-                } catch (error) {
-                    return
-                }
-            }
-        };
+    if (user === null) fetchUserData();
+  }, [user, currentPage]);
 
-        loadMoreBooks();
+  async function fetchBooks(userId: string, token: string, page: number) {
+    try {
+      const res = await fetch(`/api/book/get/noPrivate/${userId}?page=${page}&limit=10`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (data.books.length > 0) {
+        setBooks((prev) => (page === 1 ? data.books : [...prev, ...data.books]));
+      } else {
+        setHasMore(false);
+      }
+    } catch {
+      return;
+    } finally {
+      setLoading(false);
     }
-}, [inView, hasMore, loading, user?._id]);
+  }
+
+  useEffect(() => {
+    if (inView && hasMore && !loading && seeUser?._id) {
+      const loadMore = async () => {
+        const token = await refreshAccessToken();
+        await fetchBooks(seeUser._id, token!, currentPage + 1);
+        setCurrentPage((p) => p + 1);
+      };
+      loadMore();
+    }
+  }, [inView]);
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/user/logout", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
+      const response = await fetch("/api/user/logout", { method: "DELETE" });
       if (response.ok) {
         sessionStorage.clear();
         window.location.href = "/";
-      } else {
-        console.error("Failed to logout");
       }
-    } catch (error) {
-      console.error("An error occurred during logout:", error);
-    }
+    } catch {}
   };
-    // Fallback while loading user
-    if (seeUser === null || loading) {
-        return <Loading />;
-    }
 
-    return (
-        <div>
-            <div className='container py-3'>
-                <div className='text-center'>
-                    <div style={{ position: "relative" }}>
-                        <img
-                            className='pfp-home'
-                            src={seeUser?.pp || ""}
-                            alt={`profile picture from ${seeUser?.username}`}
-                            style={{
-                                position: "absolute",
-                                zIndex: 1,
-                            }}
-                        />
-                        <img className='pfp-home-blur' src={seeUser?.pp || ""} alt={`profile picture from ${seeUser?.username}`} />
-                    </div>
-                    <h1 className='mt-3 mb-0'>{seeUser?.name || seeUser?.username}</h1>
-                    <div className='secondary-text karla' dangerouslySetInnerHTML={{ __html: seeUser?.desc || "No Description" }} />
-                      {seeUser?._id === user?._id && (
-                        <div className='d-flex gap-2 justify-content-center'>
-                          <a href="/edit" className="btn primary-btn">Edit Profile</a>
-                          <button className="btn btn-danger text-white rounded" onClick={handleLogout} >
-                            Good Bye
-                          </button>
-                        </div>
-                      )}
-                </div>
-                <div className='mt-3 w-100'>
-                    <h3 className='button-container text-left'>Recent Stories</h3> {/* Teks rata kiri, lebar 100% */}
-                    {books.length > 0 ? (
-                        <div className="row">
-                            {books.map((book, index) => (
-                                <div key={book._id} className="col-md-4 col-sm-6">
-                                <BookShortcut key={book._id} book={book} refreshAccessToken={refreshAccessToken} />
-                            </div>
-                            ))}
-                            {loading && <Loading />}
-                        </div>
-                    ) : (
-                        <p>No books to display.</p>
-                    )}
-                </div>
-                <div ref={ref} />
-            </div>
+  if (seeUser === null || loading) return <Loading />;
+
+  return (
+    <div className="container py-4">
+      {/* === PROFILE SECTION === */}
+      <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-4 p-4 border-bottom border-black mb-4">
+        {/* Profile Picture */}
+        <img
+          src={seeUser?.pp || "/default-pp.jpg"}
+          alt={`profile picture from ${seeUser?.username}`}
+          className="rounded-circle border"
+          style={{
+            height: "100px",
+            objectFit: "cover",
+            flexShrink: 0,
+          }}
+        />
+
+        {/* User Info */}
+        <div className="flex-grow-1 text-center text-md-start">
+          <h2 className="fw-bold mb-2">
+            {seeUser?.name ||
+              (seeUser?.username.charAt(0).toUpperCase() +
+                seeUser?.username.slice(1))}
+          </h2>
+
+        
+          <p
+            className="text-muted karla"
+            dangerouslySetInnerHTML={{
+              __html: seeUser?.desc || "<i>No description provided.</i>",
+            }}
+          />
         </div>
-    );
+         {seeUser?._id === user?._id && (
+            <div className="d-flex gap-2 justify-content-center justify-content-md-start mb-3">
+              <a href="/edit" className="btn btn-primary rounded-pill px-4" style={{ fontSize: "2px !important", fontWeight: "600 !important" }}>
+                Edit
+              </a>
+              <button
+                className="btn btn-danger rounded-pill px-3"
+                onClick={handleLogout}
+              >
+                Keluar
+              </button>
+            </div>
+          )}
+
+      </div>
+
+      {/* === BOOKS SECTION === */}
+      <div>
+        <h3 className="fw-bold mb-3">📚 Recent Stories</h3>
+        {books.length > 0 ? (
+          <div className="row row-cols-1 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-2">
+            {books.map((book) => (
+              <div key={book._id}>
+                <BookShortcut
+                  book={book}
+                  refreshAccessToken={refreshAccessToken}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted text-center mt-5">
+            This user hasn’t published any stories yet.
+          </p>
+        )}
+      </div>
+
+      <div ref={ref} className="my-4 text-center">
+        {hasMore && loading && <Loading />}
+      </div>
+    </div>
+  );
 }
- 

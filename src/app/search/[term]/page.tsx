@@ -131,10 +131,10 @@ export default function Homepage() {
 
     return (
         <div>
-            <div className='px-3 py-3'>
-
+            <div className='px-3 py-3 container'>
+            <h4>Pencarian dari {searchTerm}</h4>
                     {books.length > 0 ? (
-                        <div className="row">
+                    <div className='row row-cols-1 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-2'>
                             {books.map((book, index) => (
                                 <div key={book._id || index} className="col-md-3 col-sm-6">
                                 <BookShortcut key={book._id || index} book={book} refreshAccessToken={refreshAccessToken} />
